@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDfhDVU0N6ZSRMQjwzWnOADOEpy7jd_31M',
-    appId: '1:196434038494:ios:95eb3487ed313693e83c4f',
+    apiKey: 'AIzaSyDKRZfaF-rciCt4ArCrRWf_d4_hw84PXl0',
+    appId: '1:810987198941:ios:35c33955acc0e5e43cbe34',
     messagingSenderId: '',
-    projectId: 'babysitter-5722a',
+    projectId: 'babysitter4b-b3fe2',
     storageBucket: '',
-    iosBundleId: 'com.example.babysitterapp',
+    iosBundleId: 'com.example.babysitterapp3',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDfhDVU0N6ZSRMQjwzWnOADOEpy7jd_31M',
-    appId: '1:196434038494:ios:95eb3487ed313693e83c4f',
+    apiKey: 'AIzaSyDKRZfaF-rciCt4ArCrRWf_d4_hw84PXl0',
+    appId: '1:810987198941:ios:35c33955acc0e5e43cbe34',
     messagingSenderId: '',
-    projectId: 'babysitter-5722a',
+    projectId: 'babysitter4b-b3fe2',
     storageBucket: '',
-    iosBundleId: 'com.example.babysitterapp',
+    iosBundleId: 'com.example.babysitterapp3',
   );
 }

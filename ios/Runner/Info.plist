@@ -11,12 +11,12 @@
 			<array>
 				<!-- TODO Replace this value: -->
 				<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
-				<string>com.googleusercontent.apps.196434038494-4nn99ikg5ek9tu61d9mcfp1a3esb9s1a</string>
+				<string>com.googleusercontent.apps.810987198941-39331fhi38d71ot8vjpc9685gp17vgen</string>
 			</array>
 		</dict>
 	</array>
 	<key>GIDClientID</key>
-	<string>196434038494-4nn99ikg5ek9tu61d9mcfp1a3esb9s1a.apps.googleusercontent.com</string>
+	<string>810987198941-39331fhi38d71ot8vjpc9685gp17vgen.apps.googleusercontent.com</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

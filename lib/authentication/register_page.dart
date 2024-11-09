@@ -1,4 +1,5 @@
 import 'package:babysitterapp/authentication/terms_condition.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:babysitterapp/utils/authentication.dart';
@@ -13,13 +14,35 @@ class BabySitterRegisterPage extends StatefulWidget {
 
 class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
   final _formKey = GlobalKey<FormState>();
+  String? fullName;
   String? _email;
   String? _password;
+  String? _role;
   String? _confirmPassword;
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   String? _phoneNumber;
   bool _isAgreed = false;
+
+  // Function to add user data to the Firestore 'users' collection
+  Future<void> addUserData(String userId, String fullName, String email,
+      String role, String phoneNumber) async {
+    try {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Firestore will create 'users' collection and 'userId' document if they don't exist
+      await firestore.collection('users').doc(userId).set({
+        'full_name': fullName,
+        'email': email,
+        'role': role,
+        'phone_number': phoneNumber,
+      });
+
+      print("User data added successfully!");
+    } catch (e) {
+      print("Failed to add user data: $e");
+    }
+  }
 
   void signUserUp() async {
     showDialog(
@@ -32,6 +55,12 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
     try {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: _email!, password: _password!);
+      // Assuming you already have a logged-in user
+      String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+      if (userId.isNotEmpty) {
+        addUserData(userId, fullName!, _email!, _role!, _phoneNumber!);
+      }
+
       Navigator.pop(context);
       Navigator.pushReplacementNamed(context, '/welcome');
     } on FirebaseAuthException catch (e) {
@@ -113,7 +142,16 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
                   ),
                   const SizedBox(height: 30),
                   // name
-                  TextField(
+                  TextFormField(
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter your full name';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      fullName = value;
+                    },
                     decoration: InputDecoration(
                       labelText: 'Full Name',
                       labelStyle: TextStyle(color: Colors.grey),
@@ -236,12 +274,12 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
                       ),
                     ),
                     items: const [
-                      DropdownMenuItem(
-                          child: Text('Employer'), value: 'employer'),
+                      DropdownMenuItem(child: Text('Parent'), value: 'parent'),
                       DropdownMenuItem(
                           child: Text('Babysitter'), value: 'babysitter'),
                     ],
                     onChanged: (value) {
+                      _role = value;
                       // Handle role selection
                     },
                   ),
