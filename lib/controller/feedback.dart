@@ -22,7 +22,7 @@ class FeedBack {
       timestamp:
           (data['timestamp'] ?? Timestamp.fromDate(DateTime.now())).toDate(),
       feedbackMsg: data['msg'] ?? '',
-      images: List<String>.from(data['images'] ?? []),
+      images: List<String>.from(data['image'] ?? []),
     );
   }
 }

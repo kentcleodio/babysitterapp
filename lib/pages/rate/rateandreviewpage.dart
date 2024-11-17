@@ -56,7 +56,7 @@ class _RateAndReviewPageState extends State<RateAndReviewPage> {
     }
   }
 
-  //store current user new feedback
+  //store current user new message
   addFeedback(String? message, int rating, List<File>? images) async {
     FeedBack newFeedBack = FeedBack(
       id: widget.currenUserID,
@@ -157,38 +157,67 @@ class _RateAndReviewPageState extends State<RateAndReviewPage> {
                           // Display selected images
                           ..._images.mapIndexed((index, image) => InkWell(
                                 onTap: () {
-                                  //choose between view or remove selected photo
                                   showModalBottomSheet(
                                     context: context,
-                                    builder: (context) =>
-                                        customWidget.rateAndReviewbottomModal(
-                                      const Icon(
-                                        Icons.remove_red_eye,
-                                        color: primaryColor,
-                                      ),
-                                      'View photo',
-                                      () {
-                                        Navigator.of(context).pop();
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              customWidget.showImageDialog(
-                                            context,
-                                            image,
+                                    builder: (context) => Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        //view image
+                                        ListTile(
+                                          leading: const Icon(
+                                            Icons.remove_red_eye,
+                                            color: primaryColor,
                                           ),
-                                        );
-                                      },
-                                      const Icon(
-                                        Icons.delete,
-                                        color: dangerColor,
-                                      ),
-                                      'Remove photo',
-                                      () {
-                                        setState(() {
-                                          _images.removeAt(index);
-                                          Navigator.of(context).pop();
-                                        });
-                                      },
+                                          title: const Text("View photo"),
+                                          onTap: () {
+                                            Navigator.of(context).pop();
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => Dialog(
+                                                backgroundColor: primaryColor,
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Image.file(
+                                                      image,
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: const Text(
+                                                        "Close",
+                                                        style: TextStyle(
+                                                          color: primaryFgColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        //remove image
+                                        ListTile(
+                                          leading: const Icon(
+                                            Icons.delete,
+                                            color: dangerColor,
+                                          ),
+                                          title: const Text("Remove photo"),
+                                          onTap: () {
+                                            setState(() {
+                                              _images.removeAt(index);
+                                              Navigator.of(context).pop();
+                                            });
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   );
                                 },
@@ -206,29 +235,35 @@ class _RateAndReviewPageState extends State<RateAndReviewPage> {
                           if (_images.length < 4)
                             InkWell(
                               onTap: () async {
-                                //choose from camera or gallery
                                 showModalBottomSheet(
                                   context: context,
-                                  builder: (context) =>
-                                      customWidget.rateAndReviewbottomModal(
-                                    const Icon(
-                                      Icons.camera_alt,
-                                      color: primaryColor,
-                                    ),
-                                    'Take a photo',
-                                    () {
-                                      Navigator.of(context).pop();
-                                      _pickImage(ImageSource.camera);
-                                    },
-                                    const Icon(
-                                      Icons.photo,
-                                      color: primaryColor,
-                                    ),
-                                    'Choose from gallery',
-                                    () {
-                                      Navigator.of(context).pop();
-                                      _pickImage(ImageSource.gallery);
-                                    },
+                                  builder: (context) => Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ListTile(
+                                        leading: const Icon(
+                                          Icons.camera_alt,
+                                          color: primaryColor,
+                                        ),
+                                        title: const Text("Take a photo"),
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                          _pickImage(ImageSource.camera);
+                                        },
+                                      ),
+                                      ListTile(
+                                        leading: const Icon(
+                                          Icons.photo,
+                                          color: primaryColor,
+                                        ),
+                                        title:
+                                            const Text("Choose from gallery"),
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                          _pickImage(ImageSource.gallery);
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 );
                               },
@@ -263,84 +298,119 @@ class _RateAndReviewPageState extends State<RateAndReviewPage> {
                           showDialog(
                             context: context,
                             barrierDismissible: false,
-                            builder: (BuildContext context) =>
-                                customWidget.rateAndReviewAlertDialog(
-                              'assets/images/confirm.gif',
-                              'Are you sure to submit your review?',
-                              [
-                                customWidget.alertDialogBtn(
-                                  'Cancel',
-                                  backgroundColor,
-                                  primaryColor,
-                                  textColor,
-                                  () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                                customWidget.alertDialogBtn(
-                                  'Submit',
-                                  primaryColor,
-                                  primaryColor,
-                                  backgroundColor,
-                                  () {
-                                    if (_rating != 0) {
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Submit review'),
+                                content: const Text(
+                                    'Are you sure to submit your review?'),
+                                actions: [
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: backgroundColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          side: const BorderSide(
+                                            color: primaryColor,
+                                          ),
+                                        )),
+                                    onPressed: () {
                                       Navigator.pop(context);
+                                    },
+                                    child: const Text(
+                                      'Cancel',
+                                      style: TextStyle(color: textColor),
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: primaryColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          side: const BorderSide(
+                                            color: primaryColor,
+                                          ),
+                                        )),
+                                    onPressed: () {
+                                      if (_rating != 0) {
+                                        Navigator.pop(context);
 
-                                      //add feedback to firestore
-                                      addFeedback(
-                                        _feedbackController.text,
-                                        _rating,
-                                        _images,
-                                      );
+                                        addFeedback(
+                                          _feedbackController.text,
+                                          _rating,
+                                          _images,
+                                        );
 
-                                      //display thankyou modal
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder: (BuildContext context) {
-                                          return Center(
-                                            child: customWidget.thankYouDialog(
-                                              () {
-                                                //pop until landing page
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const HomePage()),
-                                                );
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    } else {
-                                      Navigator.pop(context);
-                                      //display empty rating modal
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder: (BuildContext context) =>
-                                            customWidget
-                                                .rateAndReviewAlertDialog(
-                                          'assets/images/error.gif',
-                                          'Please input rating.',
-                                          [
-                                            customWidget.alertDialogBtn(
-                                              'Close',
-                                              backgroundColor,
-                                              primaryColor,
-                                              textColor,
-                                              () {
-                                                Navigator.pop(context);
-                                              },
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
+                                        //display thankyou modal
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (BuildContext context) {
+                                            return Center(
+                                              child:
+                                                  customWidget.thankYouDialog(
+                                                () {
+                                                  //pop until landing page
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const HomePage()),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        Navigator.pop(context);
+                                        //display confirmation modal
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Empty rating'),
+                                              content: const Text(
+                                                  'Please input rating.'),
+                                              actions: [
+                                                ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              backgroundColor,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                            side:
+                                                                const BorderSide(
+                                                              color:
+                                                                  primaryColor,
+                                                            ),
+                                                          )),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text(
+                                                    'Close',
+                                                    style: TextStyle(
+                                                        color: textColor),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                    child: const Text('Submit'),
+                                  ),
+                                ],
+                              );
+                            },
                           );
                         },
                         text: 'Submit',
