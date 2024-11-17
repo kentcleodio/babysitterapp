@@ -23,6 +23,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 <<<<<<< HEAD
+<<<<<<< HEAD
   // call firestore service
   FirestoreService firestoreService = FirestoreService();
   // get data from firestore using the model
@@ -96,6 +97,10 @@ class _HomePageState extends State<HomePage> {
       );
     }
   }
+=======
+  int _selectedIndex = 0;
+  final int _unreadNotifications = 4;
+>>>>>>> parent of 4c563ae (Commit)
 
   List<Map<String, dynamic>> transactions = [
     {
@@ -115,6 +120,7 @@ class _HomePageState extends State<HomePage> {
     },
   ];
 
+<<<<<<< HEAD
   List<Map<String, dynamic>> get filteredBabysitters {
     return babysitters.where((babysitter) {
       return babysitter['rating'] >= _minRating &&
@@ -193,10 +199,26 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+=======
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const BabysitterViewLocation(),
+        ),
+      );
+    }
+>>>>>>> parent of 4c563ae (Commit)
   }
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
 <<<<<<< HEAD
     final double screenHeight = sizeConfig.heightSize(context);
 
@@ -264,6 +286,8 @@ class _HomePageState extends State<HomePage> {
                   _buildAnalyticsSection(context),
                 ],
 =======
+=======
+>>>>>>> parent of 4c563ae (Commit)
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -700,6 +724,9 @@ class _HomePageState extends State<HomePage> {
           const BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
           const BottomNavigationBarItem(
               icon: Icon(Icons.person), label: 'Profile'),
+<<<<<<< HEAD
+>>>>>>> parent of 4c563ae (Commit)
+=======
 >>>>>>> parent of 4c563ae (Commit)
         ],
       ),
