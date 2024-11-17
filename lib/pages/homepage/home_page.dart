@@ -22,8 +22,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-<<<<<<< HEAD
-<<<<<<< HEAD
   // call firestore service
   FirestoreService firestoreService = FirestoreService();
   // get data from firestore using the model
@@ -43,10 +41,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _loadUserData();
   }
-=======
-  int _selectedIndex = 0;
-  final int _unreadNotifications = 4;
->>>>>>> parent of 4c563ae (Commit)
 
   final int _unreadNotifications = 4;
   double _minRating = 0.0;
@@ -81,26 +75,9 @@ class _HomePageState extends State<HomePage> {
 
   void _toggleLike(int index) {
     setState(() {
-<<<<<<< HEAD
       babysitters[index]['liked'] = !babysitters[index]['liked'];
-=======
-      _selectedIndex = index;
->>>>>>> parent of 4c563ae (Commit)
     });
-
-    if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const BabysitterViewLocation(),
-        ),
-      );
-    }
   }
-=======
-  int _selectedIndex = 0;
-  final int _unreadNotifications = 4;
->>>>>>> parent of 4c563ae (Commit)
 
   List<Map<String, dynamic>> transactions = [
     {
@@ -120,40 +97,12 @@ class _HomePageState extends State<HomePage> {
     },
   ];
 
-<<<<<<< HEAD
   List<Map<String, dynamic>> get filteredBabysitters {
     return babysitters.where((babysitter) {
       return babysitter['rating'] >= _minRating &&
           babysitter['rate'] >= _minRate;
     }).toList();
   }
-
-  List<Widget> _widgetOptions(BuildContext context) => [
-        Center(
-          child: Text(
-            'Home Page',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ),
-        Center(
-          child: Text(
-            'Messages',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ),
-        Center(
-          child: Text(
-            'Map',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ),
-        Center(
-          child: Text(
-            'Profile',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ),
-      ];
 
   Widget _buildBabysitterSection(BuildContext context, String title,
       List<Map<String, dynamic>> babysitters) {
@@ -201,14 +150,14 @@ class _HomePageState extends State<HomePage> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const BabysitterProfilePage(
-                        babysitterID: 'sample',
+                        babysitterID: 'samplebabysitter01',
                       ),
                     ),
                   );
                 },
                 child: BabysitterCard(
                   name: babysitter['name'],
-                  rate: 'Php ${babysitter['rate']}/hr',
+                  rate: 'P ${babysitter['rate']}/hr',
                   rating: babysitter['rating'],
                   reviews: babysitter['reviews'],
                   profileImage: babysitter['profileImage'],
@@ -226,27 +175,10 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
-=======
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const BabysitterViewLocation(),
-        ),
-      );
-    }
->>>>>>> parent of 4c563ae (Commit)
   }
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-<<<<<<< HEAD
     final double screenHeight = sizeConfig.heightSize(context);
 
     return currentUser == null
@@ -312,79 +244,6 @@ class _HomePageState extends State<HomePage> {
                       context, 'Total Transaction', transactions),
                   _buildAnalyticsSection(context),
                 ],
-=======
-=======
->>>>>>> parent of 4c563ae (Commit)
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Row(
-          children: [
-            InkWell(
-              onTap: () {
-                Scaffold.of(context).openDrawer();
-              },
-              child: const CircleAvatar(
-                backgroundImage: AssetImage('assets/images/male1.jpg'),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text('Hi, Sebastian', style: Theme.of(context).textTheme.bodyLarge),
-          ],
-        ),
-        actions: [
-          Icon(Icons.location_on, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(width: 8),
-          Text(
-            'The current location is unknown',
-            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-          ),
-          const SizedBox(width: 8),
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications,
-                    color: Theme.of(context).colorScheme.secondary),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NotificationPage(),
-                    ),
-                  );
-                },
-              ),
-              if (_unreadNotifications > 0)
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: CircleAvatar(
-                    radius: 10,
-                    backgroundColor: Colors.red,
-                    child: Text(
-                      '$_unreadNotifications',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            UserAccountsDrawerHeader(
-              accountName: const Text('Sebastian Abraham'),
-              accountEmail: const Text('Parent / Babysitter'),
-              currentAccountPicture: const CircleAvatar(
-                backgroundImage: AssetImage('assets/images/male1.jpg'),
->>>>>>> parent of 4c563ae (Commit)
               ),
             ),
             bottomNavigationBar: const BottomNavBar());
@@ -556,7 +415,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               },
-<<<<<<< HEAD
               child: Text(
                 'See All',
                 style: TextStyle(
@@ -566,195 +424,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-=======
-            ),
-            ListTile(
-              leading: Icon(Icons.notifications,
-                  color: Theme.of(context).colorScheme.primary),
-              title: Text('Notification',
-                  style: Theme.of(context).textTheme.bodyMedium),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const NotificationPage(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.schedule,
-                  color: Theme.of(context).colorScheme.primary),
-              title: Text('Schedules',
-                  style: Theme.of(context).textTheme.bodyMedium),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.calendar_month,
-                  color: Theme.of(context).colorScheme.primary),
-              title: Text('Availability',
-                  style: Theme.of(context).textTheme.bodyMedium),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AvailabilityPage(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings,
-                  color: Theme.of(context).colorScheme.primary),
-              title: Text('Settings',
-                  style: Theme.of(context).textTheme.bodyMedium),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SettingsPage(),
-                  ),
-                );
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: Icon(Icons.help,
-                  color: Theme.of(context).colorScheme.primary),
-              title:
-                  Text('Help', style: Theme.of(context).textTheme.bodyMedium),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('Logout Account',
-                  style: TextStyle(color: Colors.red)),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Card(
-              color: Theme.of(context).colorScheme.secondary,
-              child: ListTile(
-                leading: Icon(Icons.article,
-                    color: Theme.of(context).colorScheme.onSecondary),
-                title: Text(
-                  'Overview',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSecondary,
-                  ),
-                ),
-                subtitle: Text(
-                  'Connects parents to local, background-checked babysitters...',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSecondary,
-                  ),
-                ),
-                trailing: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.tertiary,
-                  ),
-                  child: Text('Read article',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onTertiary,
-                      )),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Top rated',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            Expanded(
-              child: ListView(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => const BabysitterProfilePage(
-                                  babysitterID: "samplebabysitter01",
-                                )),
-                      );
-                    },
-                    child: const BabysitterCard(
-                      name: 'Emma Gil',
-                      rate: 'Php 200/hr',
-                      rating: 4.3,
-                      reviews: 90,
-                      profileImage: 'assets/images/female1.jpg',
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => const BabysitterProfilePage(
-                                  babysitterID: "samplebabysitter02",
-                                )),
-                      );
-                    },
-                    child: const BabysitterCard(
-                      name: 'Andy Ryraku',
-                      rate: 'Php 200/hr',
-                      rating: 4.3,
-                      reviews: 90,
-                      profileImage: 'assets/images/female5.jpg',
-                    ),
-                  ),
-                  const BabysitterCard(
-                    name: 'Ken Takakura',
-                    rate: 'Php 200/hr',
-                    rating: 4.7,
-                    reviews: 140,
-                    profileImage: 'assets/images/male3.jpg',
-                  ),
-                  const BabysitterCard(
-                    name: 'Granny',
-                    rate: 'Php 200/hr',
-                    rating: 4.9,
-                    reviews: 404,
-                    profileImage: 'assets/images/female2.jpg',
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        backgroundColor: Colors.black,
-        selectedItemColor: Theme.of(context).colorScheme.tertiary,
-        unselectedItemColor: Colors.grey,
-        items: <BottomNavigationBarItem>[
-          const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: IconButton(
-                icon: const Icon(Icons.message),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const ChatPage()),
-                  );
-                },
-              ),
-              label: 'Messages'),
-          const BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
-          const BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: 'Profile'),
-<<<<<<< HEAD
->>>>>>> parent of 4c563ae (Commit)
-=======
->>>>>>> parent of 4c563ae (Commit)
         ],
       ),
     );
