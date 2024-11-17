@@ -128,6 +128,33 @@ class _HomePageState extends State<HomePage> {
     }).toList();
   }
 
+  List<Widget> _widgetOptions(BuildContext context) => [
+        Center(
+          child: Text(
+            'Home Page',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+        Center(
+          child: Text(
+            'Messages',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+        Center(
+          child: Text(
+            'Map',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+        Center(
+          child: Text(
+            'Profile',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+      ];
+
   Widget _buildBabysitterSection(BuildContext context, String title,
       List<Map<String, dynamic>> babysitters) {
     final double screenHeight = sizeConfig.heightSize(context);
@@ -174,14 +201,14 @@ class _HomePageState extends State<HomePage> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const BabysitterProfilePage(
-                        babysitterID: 'samplebabysitter01',
+                        babysitterID: 'sample',
                       ),
                     ),
                   );
                 },
                 child: BabysitterCard(
                   name: babysitter['name'],
-                  rate: 'P ${babysitter['rate']}/hr',
+                  rate: 'Php ${babysitter['rate']}/hr',
                   rating: babysitter['rating'],
                   reviews: babysitter['reviews'],
                   profileImage: babysitter['profileImage'],
