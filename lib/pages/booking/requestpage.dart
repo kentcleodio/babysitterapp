@@ -1,8 +1,8 @@
+import 'package:babysitterapp/pages/payment/payment_page.dart';
 import 'package:flutter/material.dart';
 import '../../components/button.dart';
 import '../../components/textfield.dart';
 import '../../styles/colors.dart';
-import '../confirmation/confirmpage.dart';
 import 'availability.dart';
 import 'time_selector.dart';
 
@@ -33,11 +33,16 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
     'Sunday': false,
   };
 
-  // New field for selected time
-  String? _selectedTime = 'Morning'; // Default time
+  final String _paymentMode = '';
 
-  String? _paymentTiming = 'Before Service'; // Default to 'Before Service'
-  String? _paymentMode = 'GCash'; // Default payment mode
+  late double hourlyRate;
+  double _durationHours = 1.0;
+
+  @override
+  void initState() {
+    super.initState();
+    hourlyRate = widget.babysitterRate.toDouble();
+  }
 
   void _submitBooking() {
     String selectedDaysString = _selectedDays.entries
@@ -48,13 +53,14 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            ConfirmationPage(
+        pageBuilder: (context, animation, secondaryAnimation) => PaymentPage(
+          babysitterImage: widget.babysitterImage,
           babysitterName: widget.babysitterName,
+          babysitterRate: widget.babysitterRate,
           specialRequirements: _specialRequirementsController.text,
-          selectedTime: _selectedTime ?? 'Morning',
-          paymentTiming: _paymentTiming ?? 'Before Service',
-          paymentMode: _paymentMode ?? 'GCash',
+          duration: _durationHours.toString(),
+          paymentMode: _paymentMode,
+          totalpayment: (hourlyRate * _durationHours).toStringAsFixed(2),
         ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(0.0, 1.0);
@@ -83,6 +89,20 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
 
   @override
   Widget build(BuildContext context) {
+    // box decoration style
+    var boxDecoration = BoxDecoration(
+      color: Theme.of(context).cardColor,
+      borderRadius: BorderRadius.circular(12.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          spreadRadius: 2,
+          blurRadius: 8,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Request Booking'),
@@ -112,18 +132,7 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
               padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(12.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 2,
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
+              decoration: boxDecoration,
               child: const Column(
                 children: [
                   Text(
@@ -173,123 +182,41 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
             Container(
               margin: const EdgeInsetsDirectional.symmetric(horizontal: 10),
               padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(12.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 2,
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
+              decoration: boxDecoration,
               child: Column(
                 children: [
                   AvailabilitySelector(selectedDays: _selectedDays),
                   const SizedBox(height: 16),
-                  TimeSelector(onTimeSelected: _onTimeSelected),
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(12.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 2,
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Choose Payment Timing',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        Row(
-                          children: [
-                            Radio<String>(
-                              value: 'Before Service',
-                              groupValue: _paymentTiming,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _paymentTiming = value;
-                                });
-                              },
-                            ),
-                            const Text('Before'),
-                            Radio<String>(
-                              value: 'After Service',
-                              groupValue: _paymentTiming,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _paymentTiming = value;
-                                });
-                              },
-                            ),
-                            const Text('After'),
-                          ],
-                        ),
-                      ],
-                    ),
+                  TimeSelector(
+                    onDurationChanged:
+                        _onDurationChanged, // Pass duration change callback
                   ),
                   const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(12.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 2,
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Select Payment Mode',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        Row(
-                          children: [
-                            Radio<String>(
-                              value: 'GCash',
-                              groupValue: _paymentMode,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _paymentMode = value;
-                                });
-                              },
-                            ),
-                            const Text('GCash'),
-                            Radio<String>(
-                              value: 'Card',
-                              groupValue: _paymentMode,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _paymentMode = value;
-                                });
-                              },
-                            ),
-                            const Text('Card'),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                  // Container(
+                  //   padding: const EdgeInsets.all(16.0),
+                  //   decoration: boxDecoration,
+                  //   child: Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       const Text(
+                  //         'Select Payment Mode',
+                  //         style: TextStyle(
+                  //             fontSize: 16, fontWeight: FontWeight.bold),
+                  //       ),
+                  //       const SizedBox(height: 16),
+                  //       AppButton(
+                  //         text: "Select Payment Mode",
+                  //         onPressed: () {
+                  //           Navigator.of(context).push(
+                  //             MaterialPageRoute(
+                  //               builder: (context) => const PaymentPage(),
+                  //             ),
+                  //           );
+                  //         },
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   const SizedBox(height: 16),
                   AppTextField(
                     controller: _specialRequirementsController,
@@ -298,7 +225,7 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
                   ),
                   const SizedBox(height: 30),
                   AppButton(
-                    text: 'Submit Request',
+                    text: 'Proceed to Payment',
                     onPressed: _submitBooking,
                   ),
                 ],

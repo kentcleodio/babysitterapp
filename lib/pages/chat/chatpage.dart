@@ -163,12 +163,6 @@ class _ChatPageState extends State<ChatPage> {
             )
           : AppBar(
               title: const Text('Messages'),
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(Icons.arrow_back),
-              ),
               actions: [
                 TextButton(
                   onPressed: () {

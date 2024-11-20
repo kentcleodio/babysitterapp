@@ -2,6 +2,7 @@ import 'package:babysitterapp/pages/homepage/home_page.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:babysitterapp/components/button.dart';
 import 'package:flutter/material.dart';
+import 'booking_service.dart';
 
 class ConfirmationPage extends StatelessWidget {
   final String babysitterName;
@@ -53,6 +54,9 @@ class ConfirmationPage extends StatelessWidget {
                 _buildTableRow('Selected Time:', selectedTime),
                 _buildTableRow('Payment Timing:', paymentTiming),
                 _buildTableRow('Payment Mode:', paymentMode),
+                _buildTableRow('Babysitter Offer:',
+                    'PHP ${babysitterRate.toStringAsFixed(2)}'),
+                _buildTableRow('Total:', totalpayment),
               ],
             ),
 
