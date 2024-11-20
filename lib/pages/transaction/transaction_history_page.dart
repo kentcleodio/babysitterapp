@@ -1,8 +1,17 @@
+<<<<<<< HEAD
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../styles/colors.dart';
 import 'transaction_model/transactionhistorydata.dart';
 import 'transaction_model/transactionhistorymodel.dart';
+=======
+// transaction history page
+
+import 'package:babysitterapp/services/booking_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+>>>>>>> upstream/main
 import 'transactioninfopage.dart';
 
 class TransactionHistoryPage extends StatelessWidget {
@@ -10,6 +19,7 @@ class TransactionHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final Map<String, List<Transaction>> groupedTransactions = {};
 
     for (var transaction in transactions) {
@@ -30,17 +40,17 @@ class TransactionHistoryPage extends StatelessWidget {
       });
 
 // Transaction
+=======
+    // call bookings service
+    final BookingService bookingService = BookingService();
+
+>>>>>>> upstream/main
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transaction History'),
-        backgroundColor: backgroundColor,
-        foregroundColor: textColor,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('bookings')
-            .orderBy('createdAt', descending: true)
-            .snapshots(),
+        stream: bookingService.getUserBookings(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
