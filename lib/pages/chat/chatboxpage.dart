@@ -10,11 +10,10 @@ import '../../views/customwidget.dart';
 
 class ChatBoxPage extends StatefulWidget {
   final String recipientID;
-  final String currentUserID;
+  final String currentUserID = 'sampleuser01';
   const ChatBoxPage({
     super.key,
     required this.recipientID,
-    required this.currentUserID,
   });
 
   @override
@@ -133,10 +132,8 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
                 onTap:
                     () => // Navigate to the chat box of the clicked babysitter
                         Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => BabysitterProfilePage(
-                    babysitterID: recipient!.id,
-                    currentUserID: widget.currentUserID,
-                  ),
+                  builder: (context) =>
+                      BabysitterProfilePage(babysitterID: recipient!.id),
                 )),
                 child: Row(
                   children: [

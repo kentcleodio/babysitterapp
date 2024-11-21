@@ -1,9 +1,17 @@
+<<<<<<< HEAD
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../../styles/colors.dart';
+import 'transaction_model/transactionhistorydata.dart';
+import 'transaction_model/transactionhistorymodel.dart';
+=======
 // transaction history page
 
 import 'package:babysitterapp/services/booking_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+>>>>>>> upstream/main
 import 'transactioninfopage.dart';
 
 class TransactionHistoryPage extends StatelessWidget {
@@ -11,9 +19,32 @@ class TransactionHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
+    final Map<String, List<Transaction>> groupedTransactions = {};
+
+    for (var transaction in transactions) {
+      final String monthYear =
+          DateFormat('MMMM yyyy').format(transaction.bookingDate);
+
+      if (groupedTransactions[monthYear] == null) {
+        groupedTransactions[monthYear] = [];
+      }
+      groupedTransactions[monthYear]!.add(transaction);
+    }
+
+    final sortedMonthKeys = groupedTransactions.keys.toList()
+      ..sort((a, b) {
+        final dateA = DateFormat('MMMM yyyy').parse(a);
+        final dateB = DateFormat('MMMM yyyy').parse(b);
+        return dateB.compareTo(dateA);
+      });
+
+// Transaction
+=======
     // call bookings service
     final BookingService bookingService = BookingService();
 
+>>>>>>> upstream/main
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transaction History'),
