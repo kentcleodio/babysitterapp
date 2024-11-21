@@ -55,8 +55,8 @@ class _SettingsPageState extends State<SettingsPage> {
               child: Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 20),
+                    padding: const EdgeInsets.only(
+                        left: 15, right: 15, bottom: 20, top: 10),
                     decoration: const BoxDecoration(
                       color: primaryColor,
                       borderRadius:
