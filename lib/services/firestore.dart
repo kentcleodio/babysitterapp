@@ -19,11 +19,9 @@ class FirestoreService {
           id: data?['id'] ?? '',
           name: data?['name'] ?? 'User not exist',
           email: data?['email'] ?? '',
-          img: (data?['img'] == null || data?['img'] == '')
-              ? 'assets/images/default_user.png'
-              : data?['img'],
+          img: data?['img'] ?? 'assets/images/default_user.png',
           address: data?['address'] ?? '',
-          phone: data?['phone'] ?? '',
+          phone: data?['phone'] ?? 0,
           birtdate: (data?['birthdate'] ?? Timestamp.fromDate(DateTime.now()))
               .toDate(),
           gender: data?['gender'] ?? '',
