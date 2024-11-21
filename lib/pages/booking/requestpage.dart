@@ -2,7 +2,6 @@ import 'package:babysitterapp/pages/payment/payment_page.dart';
 import 'package:flutter/material.dart';
 import '../../components/button.dart';
 import '../../components/textfield.dart';
-import '../../styles/colors.dart';
 import 'availability.dart';
 import 'time_selector.dart';
 
@@ -106,13 +105,10 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Request Booking'),
-        backgroundColor: backgroundColor,
-        foregroundColor: textColor,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const Divider(color: Color(0xFFD8D8D8)),
             const SizedBox(height: 20),
             Column(
               children: [

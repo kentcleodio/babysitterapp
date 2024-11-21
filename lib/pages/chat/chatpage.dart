@@ -7,8 +7,8 @@ import '/controller/userdata.dart';
 import 'chatboxpage.dart';
 
 class ChatPage extends StatefulWidget {
-  final String currentUserID = 'sampleuser01';
-  const ChatPage({super.key});
+  final String currentUserID;
+  const ChatPage({super.key, required this.currentUserID});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -72,6 +72,7 @@ class _ChatPageState extends State<ChatPage> {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => ChatBoxPage(
                 recipientID: recipient.id,
+                currentUserID: widget.currentUserID,
               ),
             ));
           }

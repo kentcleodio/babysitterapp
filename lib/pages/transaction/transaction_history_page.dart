@@ -1,8 +1,9 @@
+// transaction history page
+
+import 'package:babysitterapp/services/booking_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../styles/colors.dart';
-import 'transaction_model/transactionhistorydata.dart';
-import 'transaction_model/transactionhistorymodel.dart';
 import 'transactioninfopage.dart';
 
 class TransactionHistoryPage extends StatelessWidget {
@@ -10,37 +11,15 @@ class TransactionHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, List<Transaction>> groupedTransactions = {};
+    // call bookings service
+    final BookingService bookingService = BookingService();
 
-    for (var transaction in transactions) {
-      final String monthYear =
-          DateFormat('MMMM yyyy').format(transaction.bookingDate);
-
-      if (groupedTransactions[monthYear] == null) {
-        groupedTransactions[monthYear] = [];
-      }
-      groupedTransactions[monthYear]!.add(transaction);
-    }
-
-    final sortedMonthKeys = groupedTransactions.keys.toList()
-      ..sort((a, b) {
-        final dateA = DateFormat('MMMM yyyy').parse(a);
-        final dateB = DateFormat('MMMM yyyy').parse(b);
-        return dateB.compareTo(dateA);
-      });
-
-// Transaction
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transaction History'),
-        backgroundColor: backgroundColor,
-        foregroundColor: textColor,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('bookings')
-            .orderBy('createdAt', descending: true)
-            .snapshots(),
+        stream: bookingService.getUserBookings(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

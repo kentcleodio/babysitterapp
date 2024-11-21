@@ -1,10 +1,15 @@
+import 'package:babysitterapp/authentication/forgot_password_page.dart';
+
+import 'package:babysitterapp/authentication/check_auth_page.dart';
+
 import 'package:babysitterapp/components/button.dart';
+import 'package:babysitterapp/components/loading_screen.dart';
 import 'package:babysitterapp/pages/homepage/home_page.dart';
+import 'package:babysitterapp/services/current_user_service.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:babysitterapp/styles/size.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:babysitterapp/utils/authentication.dart';
 
 class BabySitterLoginPage extends StatefulWidget {
   const BabySitterLoginPage({super.key});
@@ -18,6 +23,9 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
   String? _email;
   String? _password;
   bool _isPasswordVisible = false;
+
+  // current user service
+  CurrentUserService googleSignIn = CurrentUserService();
 
   // Constants
   static const double _spacing = 20.0;
@@ -58,9 +66,7 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
   void _showLoadingDialog() {
     showDialog(
       context: context,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
+      builder: (context) => const LoadingScreen(),
     );
   }
 
@@ -150,6 +156,10 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
       child: TextButton(
         onPressed: () {
           // Forgot password logic
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+          );
         },
         child: const Text(
           'Forgot Password?',
@@ -201,8 +211,9 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
         _buildSocialLoginButton(
           'https://developers.google.com/identity/images/g-logo.png',
           () async {
-            await Authentication.signInWithGoogle(context: context);
-            Navigator.pushReplacementNamed(context, '/welcome');
+            await googleSignIn.signInWithGoogle();
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const CheckAuthPage()));
           },
         ),
         const SizedBox(width: _spacing),
