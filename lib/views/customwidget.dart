@@ -39,16 +39,20 @@ class CustomWidget {
       );
 
 //carousel item for feedback header
+<<<<<<< HEAD
   Widget carouselItem(BuildContext context, String? img, String name,
       int rating, String feedback, List? images) {
+=======
+  Widget carouselItem(BuildContext context, String img, String name, int rating,
+      String feedback, List? images) {
+>>>>>>> d49413a9f0991e4a46221daa479fe64501777c02
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (img != null)
-          CircleAvatar(
-            backgroundImage: AssetImage(img),
-            radius: 40,
-          ),
+        CircleAvatar(
+          backgroundImage: AssetImage(img),
+          radius: 40,
+        ),
         Text(
           name,
           style: const TextStyle(
@@ -161,7 +165,7 @@ class CustomWidget {
                       children: [
                         ratingStar(rating.toInt(), 30, Colors.amber),
                         Text(
-                          rating.toStringAsFixed(1),
+                          rating.toString(),
                           style: whiteTextColor(),
                         ),
                       ],
@@ -327,7 +331,7 @@ class CustomWidget {
                           return const CircularProgressIndicator(); // Loading indicator
                         }
                         if (!snapshot.hasData) {
-                          return const Text('Error');
+                          return const Text('Error loading user data');
                         }
 
                         // Assuming user data model has fields `img` and `name`
