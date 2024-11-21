@@ -41,7 +41,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
     switch (index) {
       case 1:
         await Navigator.push(
-            context, RouteAnimate(0.0, 1.0, page: const ChatPage()));
+            context,
+            RouteAnimate(0.0, 1.0,
+                page: const ChatPage(
+                  currentUserID: '5wnJp4QF73TvdxyZHo2jiK0NIfj2',
+                )));
         break;
       case 2:
         await Navigator.push(
