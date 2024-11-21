@@ -39,13 +39,8 @@ class CustomWidget {
       );
 
 //carousel item for feedback header
-<<<<<<< HEAD
-  Widget carouselItem(BuildContext context, String? img, String name,
-      int rating, String feedback, List? images) {
-=======
   Widget carouselItem(BuildContext context, String img, String name, int rating,
       String feedback, List? images) {
->>>>>>> d49413a9f0991e4a46221daa479fe64501777c02
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
