@@ -132,6 +132,7 @@ class _HomePageState extends State<HomePage> {
                         MaterialPageRoute(
                           builder: (context) => const BabysitterProfilePage(
                             babysitterID: 'samplebabysitter01',
+                            currentUserID: '5wnJp4QF73TvdxyZHo2jiK0NIfj2',
                           ),
                         ),
                       );

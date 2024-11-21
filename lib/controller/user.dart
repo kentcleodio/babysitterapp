@@ -6,7 +6,7 @@ class User {
   final String email;
   final String img;
   final String address;
-  final int phone;
+  final String phone;
   final DateTime birtdate;
   final String gender;
   final int rate;

@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 
 class RateAndReviewPage extends StatefulWidget {
   final String babysitterID;
-  final String currenUserID = 'sampleuser01';
+  final String currenUserID = 'rWh0SYzwFHeQD8UuScWsRkeagT83';
   const RateAndReviewPage({super.key, required this.babysitterID});
 
   @override
@@ -63,10 +63,10 @@ class _RateAndReviewPageState extends State<RateAndReviewPage> {
       rating: rating,
       feedbackMsg: message,
       images: [
-        'assets/images/male5.jpg',
-        'assets/images/male4.jpg',
-        'assets/images/male3.jpg',
-        'assets/images/male2.jpg'
+        'assets/images/feedback1.jpg',
+        'assets/images/feedback2.jpg',
+        'assets/images/feedback3.jpg',
+        'assets/images/feedback4.jpg'
       ],
       timestamp: DateTime.now(),
     );

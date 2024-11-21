@@ -3,6 +3,10 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
 
+import '../../models/user_model.dart';
+import '../../services/current_user_service.dart';
+import '../../styles/colors.dart';
+
 class Reqpage extends StatefulWidget {
   const Reqpage({super.key});
 
@@ -11,13 +15,30 @@ class Reqpage extends StatefulWidget {
 }
 
 class _ReqpageState extends State<Reqpage> {
-  File? _profileImage;
+  // call firestore service
+  CurrentUserService firestoreService = CurrentUserService();
+  // get data from firestore using the model
+  UserModel? currentUser;
+
+  // load user data
+  Future<void> _loadUserData() async {
+    final user = await firestoreService.loadUserData();
+    setState(() {
+      currentUser = user;
+    });
+  }
+
+  // initiate load
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
   File? _idFrontImage;
   File? _idBackImage;
   bool _isEditing = true;
 
-  final _emailController = TextEditingController();
-  // final _certificationController = TextEditingController();
   final _idNumberController = TextEditingController();
 
   String? _selectedGender;
@@ -75,119 +96,74 @@ class _ReqpageState extends State<Reqpage> {
     );
   }
 
+  // Input styling
+  InputDecoration get _defaultInputDecoration => InputDecoration(
+        labelStyle: const TextStyle(color: Colors.grey),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.purple),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: primaryColor),
+          borderRadius: BorderRadius.circular(15),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Information',
-          style: TextStyle(fontFamily: 'Poppins'),
-        ),
-        backgroundColor: Colors.deepPurple,
-        actions: [
-          TextButton(
-            onPressed: _saveProfile,
-            child: const Text(
-              'Confirm',
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'Poppins',
+    return currentUser == null
+        ? const Center(child: CircularProgressIndicator())
+        : Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                'Verification',
               ),
-            ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: 55,
-                  backgroundImage: _profileImage != null
-                      ? FileImage(_profileImage!)
-                      : const AssetImage('assets/images/default_user.png')
-                          as ImageProvider,
-                  backgroundColor: Colors.transparent,
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: () => _pickImage((file) => _profileImage = file),
-                    child: const CircleAvatar(
-                      radius: 18,
-                      backgroundColor: Colors.deepPurple,
-                      child: Icon(Icons.edit, color: Colors.white, size: 18),
+              backgroundColor: primaryColor,
+              actions: [
+                TextButton(
+                  onPressed: _saveProfile,
+                  child: const Text(
+                    'Confirm',
+                    style: TextStyle(
+                      color: backgroundColor,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 40),
-            _buildProfileField(
-              label: 'Email',
-              controller: _emailController,
-              enabled: _isEditing,
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  _buildProfileField(
+                    label: 'Name',
+                    initialValue: currentUser!.name,
+                    onSaved: (value) => currentUser!.name = value,
+                    validator: null,
+                    enabled: false,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildProfileField(
+                    label: 'Email',
+                    initialValue: currentUser!.email,
+                    onSaved: (value) => currentUser!.email = value,
+                    validator: null,
+                    enabled: false,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildIDTypeField(),
+                  const SizedBox(height: 20),
+                  _buildIDNumberField(), // ID number field
+                  const SizedBox(height: 20),
+                  _buildIDUploadSection(),
+                  const SizedBox(height: 30),
+                ],
+              ),
             ),
-            const SizedBox(height: 20),
-            _buildGenderField(),
-            const SizedBox(height: 20),
-            _buildBirthdateField(),
-            const SizedBox(height: 20),
-            _buildIDTypeField(),
-            const SizedBox(height: 20),
-            _buildIDNumberField(), // ID number field
-            const SizedBox(height: 20),
-            _buildIDUploadSection(),
-            const SizedBox(height: 30),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGenderField() {
-    return DropdownButtonFormField<String>(
-      value: _selectedGender,
-      items: ['Male', 'Female', 'Prefer not to say']
-          .map((gender) => DropdownMenuItem(value: gender, child: Text(gender)))
-          .toList(),
-      onChanged: _isEditing
-          ? (value) => setState(() => _selectedGender = value)
-          : null,
-      decoration: InputDecoration(
-        labelText: 'Gender',
-        labelStyle: const TextStyle(color: Colors.grey),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBirthdateField() {
-    return GestureDetector(
-      onTap: _isEditing ? _pickBirthdate : null,
-      child: AbsorbPointer(
-        child: TextFormField(
-          controller: TextEditingController(
-            text: _selectedBirthdate != null
-                ? DateFormat('MMMM dd, yyyy').format(_selectedBirthdate!)
-                : '',
-          ),
-          decoration: InputDecoration(
-            labelText: 'Birthdate',
-            labelStyle: const TextStyle(color: Colors.grey),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            suffixIcon: const Icon(Icons.calendar_today, color: Colors.grey),
-          ),
-        ),
-      ),
-    );
+          );
   }
 
   Widget _buildIDTypeField() {
@@ -294,22 +270,18 @@ class _ReqpageState extends State<Reqpage> {
 
   Widget _buildProfileField({
     required String label,
-    required TextEditingController controller,
+    required initialValue,
+    required onSaved,
+    required validator,
     bool enabled = false,
     int maxLines = 1,
   }) {
     return TextFormField(
-      controller: controller,
-      enabled: enabled,
-      maxLines: maxLines,
-      style: const TextStyle(color: Colors.black, fontFamily: 'Poppins'),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.grey),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-      ),
-    );
+        enabled: enabled,
+        maxLines: maxLines,
+        initialValue: initialValue,
+        onSaved: onSaved,
+        validator: validator,
+        decoration: _defaultInputDecoration.copyWith(labelText: label));
   }
 }
