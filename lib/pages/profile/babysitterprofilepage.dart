@@ -26,9 +26,11 @@ import '/controller/userdata.dart';
 
 class BabysitterProfilePage extends StatefulWidget {
   final String babysitterID;
+  final String currentUserID;
   const BabysitterProfilePage({
     super.key,
     required this.babysitterID,
+    required this.currentUserID,
   });
 
   @override
@@ -101,8 +103,10 @@ class _BabysitterProfilePageState extends State<BabysitterProfilePage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                ChatBoxPage(recipientID: widget.babysitterID)));
+                            builder: (context) => ChatBoxPage(
+                                  recipientID: widget.babysitterID,
+                                  currentUserID: widget.currentUserID,
+                                )));
                   },
                   backgroundColor,
                   primaryColor,

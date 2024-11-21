@@ -368,9 +368,11 @@ class _UserViewLocationState extends State<UserViewLocation> {
                                         context,
                                         RouteAnimate(0.0, 1.0,
                                             page: BabysitterProfilePage(
-                                                babysitterID:
-                                                    selectedBabysitter![
-                                                        'id'])));
+                                              babysitterID:
+                                                  selectedBabysitter!['id'],
+                                              currentUserID:
+                                                  '5wnJp4QF73TvdxyZHo2jiK0NIfj2',
+                                            )));
                                   },
                                 )),
                           ),
