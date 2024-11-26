@@ -11,6 +11,7 @@ import 'package:babysitterapp/styles/size.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/user_model.dart';
+import '../../services/babysitter_service.dart';
 import '../../services/current_user_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,16 +22,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // call firestore service
+  // call firestore services
   CurrentUserService firestoreService = CurrentUserService();
+  final BabysitterService babysitterService = BabysitterService();
   // get data from firestore using the model
   UserModel? currentUser;
+  // store babysitter list data
+  List<UserModel> _babysitters = [];
 
   // load user data
-  Future<void> _loadUserData() async {
+  Future<void> loadUserData() async {
     final user = await firestoreService.loadUserData();
     setState(() {
       currentUser = user;
+    });
+  }
+
+  // load babysitter data
+  Future<void> loadBabysitters() async {
+    final babysitters = await babysitterService.getBabysitters();
+    setState(() {
+      _babysitters = babysitters;
     });
   }
 
@@ -38,29 +50,13 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    loadUserData();
+    loadBabysitters();
   }
 
-  final int _unreadNotifications = 4;
+  final int _unreadNotifications = 1;
   double _minRating = 0.0;
   double _minRate = 0.0;
-
-  List<Map<String, dynamic>> babysitters = [
-    {
-      'name': 'Emma Gil',
-      'rate': 200.0,
-      'rating': 4.3,
-      'reviews': 90,
-      'profileImage': 'assets/images/female1.jpg',
-      'liked': false,
-    },
-  ];
-
-  void _toggleLike(int index) {
-    setState(() {
-      babysitters[index]['liked'] = !babysitters[index]['liked'];
-    });
-  }
 
   List<Map<String, dynamic>> transactions = [
     {
@@ -70,32 +66,28 @@ class _HomePageState extends State<HomePage> {
     },
   ];
 
-  List<Map<String, dynamic>> get filteredBabysitters {
-    return babysitters.where((babysitter) {
-      return babysitter['rating'] >= _minRating &&
-          babysitter['rate'] >= _minRate;
-    }).toList();
-  }
+  // List<Map<String, dynamic>> get filteredBabysitters {
+  //   return babysitters.where((babysitter) {
+  //     return babysitter['rating'] >= _minRating &&
+  //         babysitter['rate'] >= _minRate;
+  //   }).toList();
+  // }
 
-  Widget _buildBabysitterSection(BuildContext context, String title,
-      List<Map<String, dynamic>> babysitters) {
-    final double screenHeight = sizeConfig.heightSize(context);
+  Widget _buildBabysitterSection(
+      BuildContext context, String title, List<UserModel> babysitters) {
+    final double screenHeight = MediaQuery.of(context).size.height;
 
     return Column(
       children: [
         SizedBox(
-            width: sizeConfig.widthSize(context),
+            width: MediaQuery.of(context).size.width,
             child: const AppSearchButton()),
-        const SizedBox(
-          height: 15,
-        ),
+        const SizedBox(height: 15),
         Container(
-          padding: Responsive.getResponsivePadding(context),
-          margin: EdgeInsets.only(bottom: screenHeight * 0.02),
+          padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: accentColor.withOpacity(0.1),
-            borderRadius:
-                BorderRadius.circular(Responsive.getBorderRadius(context)),
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,53 +98,57 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: Responsive.getNameFontSize(context),
+                      fontSize: 18,
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.filter_list,
-                        color: Theme.of(context).colorScheme.secondary),
-                    onPressed: () {
-                      _showFilterDialog(context);
-                    },
-                  ),
+                  // IconButton(
+                  //   icon: Icon(Icons.filter_list,
+                  //       color: Theme.of(context).colorScheme.secondary),
+                  //   onPressed: () {
+                  //     _showFilterDialog(context);
+                  //   },
+                  // ),
                 ],
               ),
               SizedBox(height: screenHeight * 0.01),
-              ListView(
+              ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                children: babysitters.asMap().entries.map((entry) {
-                  int index = entry.key;
-                  var babysitter = entry.value;
+                itemCount: babysitters.length,
+                itemBuilder: (context, index) {
+                  final babysitter = babysitters[index];
                   return InkWell(
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => const BabysitterProfilePage(
-                            babysitterID: 'samplebabysitter01',
-                            currentUserID: '5wnJp4QF73TvdxyZHo2jiK0NIfj2',
+                          builder: (context) => BabysitterProfilePage(
+                            babysitterID: babysitter.email,
+                            currentUserID: currentUser!.email,
                           ),
                         ),
                       );
                     },
                     child: BabysitterCard(
-                      name: babysitter['name'],
-                      rate: 'P ${babysitter['rate']}/hr',
-                      rating: babysitter['rating'],
-                      reviews: babysitter['reviews'],
-                      profileImage: babysitter['profileImage'],
-                      heartIcon: IconButton(
-                        icon: Icon(
-                          Icons.favorite,
-                          color: babysitter['liked'] ? Colors.red : Colors.grey,
-                        ),
-                        onPressed: () => _toggleLike(index),
-                      ),
+                      name: babysitter.name,
+                      rate: babysitter.rate!,
+                      rating: babysitter.rating!,
+                      reviews: 10, // Adjust or fetch reviews count dynamically
+                      profileImage: babysitter.img ?? 'default_image_url',
+
+                      // TODO: implementation of favorite babysitter
+                      // heartIcon: IconButton(
+                      //   icon: Icon(
+                      //     Icons.favorite,
+                      //     color: babysitter.experience?.isNotEmpty == true
+                      //         (remove this)? Colors.red
+                      //         : Colors.grey,
+                      //   ),
+                      //   onPressed: () => _toggleLike(index),
+                      // ),
                     ),
                   );
-                }).toList(),
+                },
               ),
             ],
           ),
@@ -221,10 +217,10 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   SizedBox(height: screenHeight * 0.01),
                   _buildBabysitterSection(
-                      context, 'Top Rated Babysitters', filteredBabysitters),
-                  _buildTransactionSection(
-                      context, 'Total Transaction', transactions),
-                  _buildAnalyticsSection(context),
+                      context, 'Top Rated Babysitters', _babysitters),
+                  // _buildTransactionSection(
+                  //     context, 'Total Transaction', transactions),
+                  // _buildAnalyticsSection(context),
                 ],
               ),
             ),
@@ -237,16 +233,16 @@ class _HomePageState extends State<HomePage> {
     double averageRating = 0.0;
     double averageRate = 0.0;
 
-    if (filteredBabysitters.isNotEmpty) {
-      averageRating = filteredBabysitters
-              .map((babysitter) => babysitter['rating'] as double)
-              .reduce((a, b) => a + b) /
-          filteredBabysitters.length;
-      averageRate = filteredBabysitters
-              .map((babysitter) => babysitter['rate'] as double)
-              .reduce((a, b) => a + b) /
-          filteredBabysitters.length;
-    }
+    // if (filteredBabysitters.isNotEmpty) {
+    //   averageRating = filteredBabysitters
+    //           .map((babysitter) => babysitter['rating'] as double)
+    //           .reduce((a, b) => a + b) /
+    //       filteredBabysitters.length;
+    //   averageRate = filteredBabysitters
+    //           .map((babysitter) => babysitter['rate'] as double)
+    //           .reduce((a, b) => a + b) /
+    //       filteredBabysitters.length;
+    // }
 
     return Container(
       padding: Responsive.getResponsivePadding(context),
@@ -293,13 +289,13 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           SizedBox(height: screenHeight * 0.01),
-          Text(
-            'Total Babysitters: ${filteredBabysitters.length}',
-            style: TextStyle(
-              fontSize: Responsive.getTextFontSize(context),
-              color: Theme.of(context).textTheme.bodyLarge?.color,
-            ),
-          ),
+          // Text(
+          //   'Total Babysitters: ${filteredBabysitters.length}',
+          //   style: TextStyle(
+          //     fontSize: Responsive.getTextFontSize(context),
+          //     color: Theme.of(context).textTheme.bodyLarge?.color,
+          //   ),
+          // ),
         ],
       ),
     );

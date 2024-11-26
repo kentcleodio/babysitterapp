@@ -177,7 +177,7 @@ class ConfirmationPage extends StatelessWidget {
 
   String _cleanDuration(String duration) {
     if (duration.endsWith('.0')) {
-      return '${duration.substring(0, duration.indexOf('.'))} Hours';
+      return '${duration.substring(0, duration.indexOf('.'))} hour/s';
     }
     return '$duration Hours';
   }

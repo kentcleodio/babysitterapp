@@ -9,12 +9,18 @@ class BookingRequestPage extends StatefulWidget {
   final String babysitterImage;
   final String babysitterName;
   final double babysitterRate;
+  final String babysitterAddress;
+  final String babysitterGender;
+  final DateTime babysitterBirthday;
 
   const BookingRequestPage({
     super.key,
     required this.babysitterImage,
     required this.babysitterName,
     required this.babysitterRate,
+    required this.babysitterAddress,
+    required this.babysitterGender,
+    required this.babysitterBirthday,
   });
 
   @override
@@ -26,10 +32,10 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
       TextEditingController();
   final Map<String, bool> _selectedDays = {
     'Monday': true,
-    'Tuesday': true,
-    'Wednesday': false,
+    'Tuesday': false,
+    'Wednesday': true,
     'Thursday': false,
-    'Friday': false,
+    'Friday': true,
     'Saturday': false,
     'Sunday': false,
   };
@@ -39,9 +45,23 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
   late double hourlyRate;
   double _durationHours = 1.0;
 
+  // Convert DateTime to age
+  late int age;
+  void calculateAge() {
+    DateTime currentDate = DateTime.now();
+    age = currentDate.year - widget.babysitterBirthday.year;
+
+    if (currentDate.month < widget.babysitterBirthday.month ||
+        (currentDate.month == widget.babysitterBirthday.month &&
+            currentDate.day < widget.babysitterBirthday.day)) {
+      age--;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    calculateAge();
     hourlyRate = widget.babysitterRate.toDouble();
   }
 
@@ -115,7 +135,8 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
                 const SizedBox(height: 16),
                 Text(
                   widget.babysitterName,
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 18),
                 ),
               ],
             ),
@@ -124,46 +145,52 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
               margin: const EdgeInsets.symmetric(horizontal: 10),
               padding: const EdgeInsets.all(16.0),
               decoration: boxDecoration,
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Babysitter Details',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     children: [
-                      Icon(Icons.location_on),
-                      SizedBox(width: 8),
-                      Text('Location: Davao City'),
+                      const Icon(Icons.location_on),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          'Location: ${widget.babysitterAddress}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      )
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.payment),
-                      SizedBox(width: 8),
-                      Text('Pay per Hour: Php 200'),
+                      const Icon(Icons.payment),
+                      const SizedBox(width: 8),
+                      Text('Pay per Hour: P${widget.babysitterRate}'),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.accessibility),
-                      SizedBox(width: 8),
-                      Text('Gender: Female'),
+                      const Icon(Icons.accessibility),
+                      const SizedBox(width: 8),
+                      Text('Gender: ${widget.babysitterGender}'),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.calendar_today),
-                      SizedBox(width: 8),
-                      Text('Age: 28'),
+                      const Icon(Icons.calendar_today),
+                      const SizedBox(width: 8),
+                      Text('Age: $age'),
                     ],
                   ),
                 ],

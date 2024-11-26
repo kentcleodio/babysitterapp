@@ -123,21 +123,6 @@ class TransactionInfoPage extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: AppButton(
-                          text: "Rate Babysitter",
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const RateAndReviewPage(
-                                  babysitterID: 'samplebabysitter01',
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: AppButton(
                           text: "Close",
                           onPressed: () {
                             Navigator.pop(context);

@@ -68,9 +68,9 @@ class _SettingsPageState extends State<SettingsPage> {
                           child: Container(
                             width: 70,
                             height: 70,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage('assets/images/home-bg.jpg'),
+                                image: AssetImage(currentUser!.img!),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -101,22 +101,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                   color: backgroundColor,
                                   fontWeight: FontWeight.w600),
                             ),
-                            // TextButton(
-                            //   onPressed: () {
-                            //     Navigator.of(context).push(
-                            //       MaterialPageRoute(
-                            //           builder: (context) =>
-                            //               const AccountPage()),
-                            //     );
-                            //   },
-                            //   child: const Text(
-                            //     'View Profile',
-                            //     style: TextStyle(
-                            //       fontSize: 14,
-                            //       color: Colors.orange,
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       ],

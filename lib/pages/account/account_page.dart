@@ -167,9 +167,7 @@ class _AccountPageState extends State<AccountPage> {
                           radius: 55,
                           backgroundImage: _profileImage != null
                               ? FileImage(_profileImage!)
-                              : const AssetImage(
-                                      'assets/images/default_user.png')
-                                  as ImageProvider,
+                              : AssetImage(currentUser!.img!) as ImageProvider,
                         ),
                         if (_isEditing)
                           Positioned(

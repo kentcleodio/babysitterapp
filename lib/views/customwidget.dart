@@ -128,10 +128,9 @@ class CustomWidget {
     String address,
     DateTime birtdate,
     String gender,
-    int rate,
+    double rate,
     double rating,
     int reviewsNo,
-    int familyservedNo,
   ) {
     DateTime currentDate = DateTime.now();
     TextStyle whiteTextColor() => const TextStyle(color: backgroundColor);
@@ -182,10 +181,6 @@ class CustomWidget {
               ),
               Text(
                 address,
-                style: whiteTextColor(),
-              ),
-              Text(
-                '$familyservedNo Families Served',
                 style: whiteTextColor(),
               ),
               const SizedBox(height: 20),

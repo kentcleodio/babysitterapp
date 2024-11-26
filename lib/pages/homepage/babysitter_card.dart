@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class BabysitterCard extends StatelessWidget {
   final String name;
-  final String rate;
+  final double rate;
   final double rating;
   final int reviews;
   final String profileImage;
-  final IconButton heartIcon;
+  // final IconButton heartIcon;
 
   const BabysitterCard({
     super.key,
@@ -15,7 +15,7 @@ class BabysitterCard extends StatelessWidget {
     required this.rating,
     required this.reviews,
     this.profileImage = 'assets/avatar.png',
-    required this.heartIcon,
+    // required this.heartIcon,
   });
 
   @override
@@ -34,16 +34,17 @@ class BabysitterCard extends StatelessWidget {
         ),
         title: Row(
           children: [
-            Text(
-              name,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+            Expanded(
+              child: Text(
+                name,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+              ),
             ),
-            const Spacer(),
             Text(
-              rate,
+              'P$rate/hr',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -73,8 +74,14 @@ class BabysitterCard extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
               ),
             ),
-            const Spacer(),
-            heartIcon,
+            // const Spacer(),
+            // IconButton(
+            //   icon: const Icon(Icons.favorite_border),
+            //   color: Theme.of(context).colorScheme.primary,
+            //   onPressed: () {
+            //     // Handle heart icon press
+            //   },
+            // ),
           ],
         ),
       ),
