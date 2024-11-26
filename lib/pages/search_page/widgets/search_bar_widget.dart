@@ -67,7 +67,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
               Expanded(
                 child: TextField(
                   controller: widget.searchController,
-                  focusNode: _focusNode,
+                  // focusNode: _focusNode,
                   cursorColor: accentColor,
                   decoration: InputDecoration(
                     filled: true,

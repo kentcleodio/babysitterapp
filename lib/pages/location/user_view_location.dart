@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../../services/search_service.dart';
+import '../../models/user_model.dart';
+import '../../services/babysitter_service.dart';
+import '../../services/current_user_service.dart';
 import '../../styles/colors.dart';
 import '../../styles/route_animation.dart';
 import '../../styles/size.dart';
@@ -17,46 +19,72 @@ class UserViewLocation extends StatefulWidget {
 }
 
 class _UserViewLocationState extends State<UserViewLocation> {
+  // call firestore services
+  CurrentUserService firestoreService = CurrentUserService();
+  final BabysitterService babysitterService = BabysitterService();
+  // get data from firestore using the model
+  UserModel? currentUser;
+  // store babysitter list data
+  List<UserModel> _babysitters = [];
+  // Selected babysitter details
+  UserModel? selectedBabysitter;
   // Show info container
   bool showContainer = false;
 
-  // Selected babysitter details
-  Map<String, dynamic>? selectedBabysitter;
-
-  // Services
-  final SearchService searchService = SearchService();
-
   // Locations
   final LatLng center = const LatLng(7.306836, 125.680799);
-
-  // Babysitter data
-  List<Map<String, dynamic>> babysitters = [];
-
-  // styles widgets
-  var textStyle = const TextStyle(fontSize: 12);
-  var textOverflow = TextOverflow.ellipsis;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchBabysitters();
+  // Radius for geofence
+  double _geofenceRadius = 500;
+  // load user data
+  Future<void> loadUserData() async {
+    final user = await firestoreService.loadUserData();
+    setState(() {
+      currentUser = user;
+    });
   }
 
-  // Fetch babysitters from Firestore
-  Future<void> _fetchBabysitters() async {
-    final fetchedBabysitters = await searchService.fetchBabysitters();
+  // load babysitter data
+  Future<void> loadBabysitters() async {
+    final babysitters = await babysitterService.getBabysitters();
     setState(() {
-      babysitters = fetchedBabysitters;
+      _babysitters = babysitters;
     });
   }
 
   // Show/hide info container
-  void _showContainer(Map<String, dynamic> babysitter) {
+  void _showContainer(UserModel babysitter) {
     setState(() {
       selectedBabysitter = babysitter;
       showContainer = true;
     });
   }
+
+  // Function to calculate distance
+  // Function to calculate distance between two LatLng points
+  double _calculateDistance(LatLng start, LatLng end) {
+    var distance = const Distance();
+    return distance.as(
+        LengthUnit.Meter, start, end); // Returns the distance in meters
+  }
+
+  // Function to update geofence radius (for testing)
+  void _updateRadius(double newRadius) {
+    setState(() {
+      _geofenceRadius = newRadius;
+    });
+  }
+
+  // initiate load
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+    loadBabysitters();
+  }
+
+  // styles widgets
+  var textStyle = const TextStyle(fontSize: 12);
+  var textOverflow = TextOverflow.ellipsis;
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +95,10 @@ class _UserViewLocationState extends State<UserViewLocation> {
           children: [
             FlutterMap(
               options: MapOptions(
-                initialCenter: center,
-                initialZoom: 14,
-                minZoom: 14,
-              ),
+                  initialCenter: center,
+                  initialZoom: 14,
+                  minZoom: 14,
+                  maxZoom: 14),
               children: [
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -80,127 +108,221 @@ class _UserViewLocationState extends State<UserViewLocation> {
                 _buildMarkers(),
               ],
             ),
-            _buildInformation(),
+            showContainer == false
+                ? _buildGeofenceRadiusSlider()
+                : _buildInformation(),
           ],
         ),
       ),
     );
   }
 
-  // CircleLayer to show user's radius
+  // Adjustable radius slider
+  Widget _buildGeofenceRadiusSlider() {
+    return Positioned(
+      bottom: 20,
+      left: 20,
+      right: 20,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Radius Display with Icon
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.location_on,
+                  color: primaryColor,
+                  size: 24,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Distance',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[800],
+                  ),
+                ),
+              ],
+            ),
+            // Radius Value with Animated Counter
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: Text(
+                '${_geofenceRadius.toStringAsFixed(0)} meters',
+                key: ValueKey(_geofenceRadius),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: primaryColor,
+                ),
+              ),
+            ),
+
+            // Enhanced Slider
+            SliderTheme(
+              data: SliderThemeData(
+                activeTrackColor: primaryColor,
+                inactiveTrackColor: Colors.grey[300],
+                thumbColor: primaryColor,
+                overlayColor: primaryColor.withOpacity(0.2),
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 24),
+              ),
+              child: Slider(
+                value: _geofenceRadius,
+                min: 500,
+                max: 2000,
+                divisions: 15,
+                onChanged: (newRadius) {
+                  _updateRadius(newRadius);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // CircleLayer with dynamic radius
   Widget _buildCircleLayer() {
     return CircleLayer(
       circles: [
         CircleMarker(
           point: center,
-          color: Colors.blue.withOpacity(0.3),
-          borderColor: Colors.blue,
+          color: primaryColor.withOpacity(0.3),
+          borderColor: primaryColor,
           borderStrokeWidth: 2,
-          radius: 200,
+          radius: _geofenceRadius / 10, // Adjust this conversion factor
         ),
       ],
     );
   }
 
-  // Map markers
+  // Map markers with geofencing
   Widget _buildMarkers() {
-    return MarkerLayer(
-      markers: babysitters.map((babysitter) {
-        final location = babysitter['location'];
-        if (location == null) {
-          return Marker(point: const LatLng(0, 0), child: Container());
-        }
-        return Marker(
-          point: LatLng(location.latitude, location.longitude),
-          width: 100,
-          height: 80,
-          child: GestureDetector(
-            onTap: () => _showContainer(babysitter),
-            child: _buildBabysitterCard(babysitter),
-          ),
-        );
-      }).toList(),
-    );
+    final List<Marker> markers = _babysitters.where((babysitter) {
+      // Create LatLng for babysitter location
+      final babysitterLocation =
+          LatLng(babysitter.location!.latitude, babysitter.location!.longitude);
+
+      // Calculate exact distance
+      final distanceToCenter = _calculateDistance(babysitterLocation, center);
+
+      // Only include markers within geofence radius
+      return distanceToCenter <= _geofenceRadius;
+    }).map((babysitter) {
+      return Marker(
+        point: LatLng(
+            babysitter.location!.latitude, babysitter.location!.longitude),
+        width: 100,
+        height: 80,
+        child: GestureDetector(
+          onTap: () {
+            _showContainer(babysitter); // Use the show container method
+            print("Tapped on ${babysitter.name}");
+          },
+          child: _buildBabysitterCard(babysitter),
+        ),
+      );
+    }).toList();
+
+    return MarkerLayer(markers: markers);
   }
 
   // Babysitter card widget for marker
-  Widget _buildBabysitterCard(Map<String, dynamic> babysitter) {
+  Widget _buildBabysitterCard(UserModel? babysitter) {
     return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: const [
-          BoxShadow(color: Colors.black26, blurRadius: 6, spreadRadius: 1),
-        ],
-      ),
-      width: 100,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ClipOval(
-            child: Image.asset(
-              babysitter['img'],
-              width: 30,
-              height: 30,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            babysitter['name'],
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              overflow: TextOverflow.ellipsis,
-            ),
-            maxLines: 1,
-            textAlign: TextAlign.center,
-          ),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.star, size: 10, color: Colors.amber),
-              SizedBox(width: 2),
-              Text(
-                "5.0",
-                style: TextStyle(fontSize: 8),
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: const [
+            BoxShadow(color: Colors.black26, blurRadius: 6, spreadRadius: 1),
+          ],
+        ),
+        width: 100,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ClipOval(
+              child: Image.asset(
+                babysitter!.img!,
+                width: 30,
+                height: 30,
+                fit: BoxFit.cover,
               ),
-            ],
-          ),
-          Text(
-            "P${babysitter['rate']}/hour",
-            style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w600),
-          ),
-        ],
-      ),
-    );
+            ),
+            const SizedBox(height: 4),
+            Text(
+              babysitter.name,
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                overflow: TextOverflow.ellipsis,
+              ),
+              maxLines: 1,
+              textAlign: TextAlign.center,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.star, size: 10, color: Colors.amber),
+                const SizedBox(width: 2),
+                Text(
+                  '${babysitter.rating}',
+                  style: const TextStyle(fontSize: 8),
+                ),
+              ],
+            ),
+            Text(
+              "P${babysitter.rate}/hour",
+              style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ));
   }
 
   Widget _buildInformation() {
     if (selectedBabysitter == null) return const SizedBox.shrink();
 
-    return AnimatedPositioned(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOutCubic,
-      bottom: showContainer ? 25 : -200,
+    return Positioned(
+      bottom: 20, // Adjusts visibility
       left: 0,
       right: 0,
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 300),
-        opacity: showContainer ? 1.0 : 0.0,
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            showContainer = false; // Hide the container
+            selectedBabysitter = null; // Clear selected babysitter
+          });
+        },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Container(
-            width: sizeConfig.widthSize(context),
             decoration: BoxDecoration(
               color: backgroundColor,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.15),
-                  blurRadius: 20.0,
-                  spreadRadius: 5.0,
+                  blurRadius: 20,
+                  spreadRadius: 5,
                   offset: const Offset(0, 8),
                 ),
               ],
@@ -208,7 +330,7 @@ class _UserViewLocationState extends State<UserViewLocation> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Drag indicator
+                // Drag Indicator
                 Container(
                   margin: const EdgeInsets.only(top: 12),
                   width: 40,
@@ -219,75 +341,30 @@ class _UserViewLocationState extends State<UserViewLocation> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
                           // Profile Image Section
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: tertiaryColor,
-                                width: 2,
-                              ),
-                            ),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              radius: 40,
-                              backgroundImage: AssetImage(
-                                selectedBabysitter!['img'] ?? '',
-                              ),
-                            ),
+                          CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            radius: 40,
+                            backgroundImage:
+                                AssetImage(selectedBabysitter!.img ?? ''),
                           ),
                           const SizedBox(width: 16),
-                          // Information Section
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        selectedBabysitter!['name'] ?? '',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.green.shade50,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.verified,
-                                            size: 14,
-                                            color: Colors.green.shade700,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            'Verified',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.green.shade700,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                Text(
+                                  selectedBabysitter!.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
                                 ),
                                 const SizedBox(height: 8),
                                 Row(
@@ -300,7 +377,7 @@ class _UserViewLocationState extends State<UserViewLocation> {
                                     const SizedBox(width: 4),
                                     Expanded(
                                       child: Text(
-                                        selectedBabysitter!['address'] ?? '',
+                                        selectedBabysitter!.address ?? '',
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: Colors.grey.shade600,
@@ -316,7 +393,7 @@ class _UserViewLocationState extends State<UserViewLocation> {
                                   children: [
                                     _buildInfoChip(
                                       icon: Icons.star_rounded,
-                                      label: "5.0 (90+)",
+                                      label: '${selectedBabysitter!.rating}',
                                       iconColor: Colors.amber,
                                     ),
                                     const SizedBox(width: 8),
@@ -332,7 +409,6 @@ class _UserViewLocationState extends State<UserViewLocation> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      // Bottom Section with Rate and Button
                       Row(
                         children: [
                           Expanded(
@@ -348,7 +424,7 @@ class _UserViewLocationState extends State<UserViewLocation> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'P${selectedBabysitter!['rate']}/hr',
+                                  'P${selectedBabysitter!.rate}/hr',
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -360,21 +436,22 @@ class _UserViewLocationState extends State<UserViewLocation> {
                           ),
                           Expanded(
                             child: SizedBox(
-                                height: 46,
-                                child: AppButton(
-                                  text: "Book Now",
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        RouteAnimate(0.0, 1.0,
-                                            page: BabysitterProfilePage(
-                                              babysitterID:
-                                                  selectedBabysitter!['id'],
-                                              currentUserID:
-                                                  '5wnJp4QF73TvdxyZHo2jiK0NIfj2',
-                                            )));
-                                  },
-                                )),
+                              height: 46,
+                              child: AppButton(
+                                text: "Book Now",
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    RouteAnimate(0.0, 1.0,
+                                        page: BabysitterProfilePage(
+                                          babysitterID:
+                                              selectedBabysitter!.email,
+                                          currentUserID: currentUser!.email,
+                                        )),
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ],
                       ),

@@ -14,11 +14,11 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
-  Widget _filterWidget = Container();
+  Widget _filterWidget = const UserViewLocation();
   final List<String> _searchHistory = [];
   final List<SearchResult> _allBabysitters = SearchResult.fetchBabysitters();
   List<SearchResult> _searchResults = [];
-  String _selectedFilter = '';
+  String _selectedFilter = 'Near you';
 
   bool _showAutocomplete = false;
   bool _showResults = false;
@@ -170,29 +170,19 @@ class _SearchPageState extends State<SearchPage> {
           //   const AllDefaultWidget(),
 
           Expanded(
-            child: _selectedFilter == 'Babysitters'
-                ? _filterWidget
-                : _selectedFilter == 'Near you'
-                    ? _filterWidget
-                    : _showResults
-                        ? SearchResultsWidget(
-                            searchResults: _searchResults,
-                            onLabelClick: _onLabelClick,
-                            noResultsFound: _noResultsFound,
-                            type: 'Babysitters',
-                          )
-                        : _showAutocomplete
-                            ? AutocompleteWidget(
-                                searchResults: _searchResults,
-                                onLabelClick: _onLabelClick,
-                              )
-                            : _searchHistory.isEmpty
-                                ? const Center(child: Text('No search yet.'))
-                                : DefaultListWidget(
-                                    searchHistory: _searchHistory,
-                                    onHistoryItemClick: _onHistoryItemClick,
-                                    onClearHistory: _clearSearchHistory,
-                                  ),
+            child: _showResults
+                ? SearchResultsWidget(
+                    searchResults: _searchResults,
+                    onLabelClick: _onLabelClick,
+                    noResultsFound: _noResultsFound,
+                    type: 'Babysitters',
+                  )
+                : _showAutocomplete
+                    ? AutocompleteWidget(
+                        searchResults: _searchResults,
+                        onLabelClick: _onLabelClick,
+                      )
+                    : _filterWidget, // Default widget
           ),
         ],
       ),
