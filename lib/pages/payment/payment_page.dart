@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 class PaymentPage extends StatefulWidget {
   final String babysitterImage;
   final String babysitterName;
+  final String babysitterEmail;
+
+  final String parentName;
   final String specialRequirements;
   final String duration;
   String? paymentMode;
@@ -14,11 +17,13 @@ class PaymentPage extends StatefulWidget {
       {super.key,
       required this.babysitterImage,
       required this.babysitterName,
+      required this.parentName,
       required this.specialRequirements,
       required this.duration,
       required this.paymentMode,
       required this.totalpayment,
-      required this.babysitterRate});
+      required this.babysitterRate,
+      required this.babysitterEmail});
 
   @override
   _PaymentPageState createState() => _PaymentPageState();
@@ -63,11 +68,13 @@ class _PaymentPageState extends State<PaymentPage> {
           builder: (context) => ConfirmationPage(
             babysitterImage: widget.babysitterImage,
             babysitterName: widget.babysitterName,
+            parentName: widget.parentName,
             specialRequirements: widget.specialRequirements,
             paymentMode: widget.paymentMode!,
             duration: widget.duration.toString(),
             totalpayment: widget.totalpayment,
             babysitterRate: widget.babysitterRate,
+            babysitterEmail: widget.babysitterEmail,
           ),
         ),
       );
@@ -81,6 +88,8 @@ class _PaymentPageState extends State<PaymentPage> {
           builder: (context) => ConfirmationPage(
             babysitterImage: widget.babysitterImage,
             babysitterName: widget.babysitterName,
+            babysitterEmail: widget.babysitterEmail,
+            parentName: widget.parentName,
             specialRequirements: widget.specialRequirements,
             paymentMode: widget.paymentMode!,
             duration: widget.duration.toString(),

@@ -1,22 +1,6 @@
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'samplebabysitter01'
-
 import 'package:babysitterapp/pages/booking/requestpage.dart';
 import 'package:babysitterapp/pages/chat/chatboxpage.dart';
-import 'package:babysitterapp/services/firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../controller/feedback.dart';
 import '../../models/user_model.dart';
 import '../../services/babysitter_service.dart';
 import '../../services/current_user_service.dart';
@@ -24,8 +8,6 @@ import '../../views/customwidget.dart';
 import '/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../controller/user.dart';
-import '/controller/userdata.dart';
 
 class BabysitterProfilePage extends StatefulWidget {
   final String babysitterID;
@@ -161,6 +143,8 @@ class _BabysitterProfilePageState extends State<BabysitterProfilePage> {
                         builder: (context) => BookingRequestPage(
                           babysitterImage: babysitter!.img ?? '',
                           babysitterName: babysitter!.name,
+                          babysitterEmail: babysitter!.email,
+                          parentName: currentUser!.name,
                           babysitterRate: babysitter!.rate!,
                           babysitterAddress: babysitter!.address!,
                           babysitterGender: babysitter!.gender!,

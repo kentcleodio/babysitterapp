@@ -7,7 +7,9 @@ import 'time_selector.dart';
 
 class BookingRequestPage extends StatefulWidget {
   final String babysitterImage;
+  final String parentName;
   final String babysitterName;
+  final String babysitterEmail;
   final double babysitterRate;
   final String babysitterAddress;
   final String babysitterGender;
@@ -17,10 +19,12 @@ class BookingRequestPage extends StatefulWidget {
     super.key,
     required this.babysitterImage,
     required this.babysitterName,
+    required this.parentName,
     required this.babysitterRate,
     required this.babysitterAddress,
     required this.babysitterGender,
     required this.babysitterBirthday,
+    required this.babysitterEmail,
   });
 
   @override
@@ -72,6 +76,8 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
         pageBuilder: (context, animation, secondaryAnimation) => PaymentPage(
           babysitterImage: widget.babysitterImage,
           babysitterName: widget.babysitterName,
+          babysitterEmail: widget.babysitterEmail,
+          parentName: widget.parentName,
           babysitterRate: widget.babysitterRate,
           specialRequirements: _specialRequirementsController.text,
           duration: _durationHours.toString(),

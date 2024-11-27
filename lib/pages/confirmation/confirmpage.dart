@@ -7,6 +7,8 @@ import '../../services/booking_service.dart';
 class ConfirmationPage extends StatelessWidget {
   final String babysitterImage;
   final String babysitterName;
+  final String babysitterEmail;
+  final String parentName;
   final String specialRequirements;
   final String duration;
   final String paymentMode;
@@ -22,6 +24,8 @@ class ConfirmationPage extends StatelessWidget {
     required this.paymentMode,
     required this.totalpayment,
     required this.babysitterRate,
+    required this.parentName,
+    required this.babysitterEmail,
   });
 
   @override
@@ -56,6 +60,7 @@ class ConfirmationPage extends StatelessWidget {
                 _buildTableRow('Special Requirements:',
                     specialRequirements.isEmpty ? 'None' : specialRequirements),
                 _buildTableRow('Duration:', _cleanDuration(duration)),
+                _buildTableRow('Parent Name:', parentName),
                 _buildTableRow('Payment Mode:', paymentMode),
                 _buildTableRow('Babysitter Offer:',
                     'PHP ${babysitterRate.toStringAsFixed(2)}'),
@@ -99,8 +104,10 @@ class ConfirmationPage extends StatelessWidget {
                               // Call the saveBooking method to store the booking in Firestore
                               await BookingService().saveBooking(
                                 babysitterName: babysitterName,
+                                babysitterEmail: babysitterEmail,
                                 specialRequirements: specialRequirements,
                                 duration: duration,
+                                parentName: parentName,
                                 paymentMode: paymentMode,
                                 totalpayment: totalpayment,
                                 babysitterRate: babysitterRate,
