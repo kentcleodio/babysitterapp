@@ -21,13 +21,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return BottomNavigationBar(
       currentIndex: _selectedIndex,
       onTap: _onItemTapped,
-      backgroundColor: Colors.black,
+      backgroundColor: backgroundColor,
       selectedItemColor: primaryColor,
       unselectedItemColor: Colors.grey,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
         BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Messages'),
-        BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
       ],
     );
@@ -48,14 +47,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 )));
         break;
       case 2:
-        await Navigator.push(
-            context,
-            RouteAnimate(0, 1.0,
-                page: BabysitterViewLocation(
-                  selectedBabysitterName: "Emma Gill",
-                )));
-        break;
-      case 3:
         await Navigator.push(
             context, RouteAnimate(1.0, 0, page: const SettingsPage()));
         break;

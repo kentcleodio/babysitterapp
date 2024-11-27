@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:babysitterapp/authentication/terms_condition.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -7,16 +8,22 @@ import 'package:babysitterapp/services/firestore.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:babysitterapp/styles/size.dart';
 
+import '../../components/button.dart';
 import '../../services/location_service.dart';
 import '../../services/search_service.dart';
+import '../../styles/route_animation.dart';
 
 // ignore: must_be_immutable
 class BabysitterViewLocation extends StatefulWidget {
   // selected babysitter ID
   String? selectedBabysitterName;
+  final String? totalPayment;
+  final String? duration;
   BabysitterViewLocation({
     super.key,
     this.selectedBabysitterName,
+    this.totalPayment,
+    this.duration,
   });
 
   @override
@@ -170,7 +177,7 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
       right: 0,
       bottom: 15,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Container(
           width: sizeConfig.widthSize(context),
           decoration: BoxDecoration(
@@ -238,35 +245,36 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green.shade50,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.verified,
-                                          size: 14,
-                                          color: Colors.green.shade700,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          'Verified',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.green.shade700,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                  //! temporarily removed verified container
+                                  // Container(
+                                  //   padding: const EdgeInsets.symmetric(
+                                  //     horizontal: 8,
+                                  //     vertical: 4,
+                                  //   ),
+                                  //   decoration: BoxDecoration(
+                                  //     color: Colors.green.shade50,
+                                  //     borderRadius: BorderRadius.circular(12),
+                                  //   ),
+                                  //   child: Row(
+                                  //     mainAxisSize: MainAxisSize.min,
+                                  //     children: [
+                                  //       Icon(
+                                  //         Icons.verified,
+                                  //         size: 14,
+                                  //         color: Colors.green.shade700,
+                                  //       ),
+                                  //       const SizedBox(width: 4),
+                                  //       Text(
+                                  //         'Verified',
+                                  //         style: TextStyle(
+                                  //           fontSize: 12,
+                                  //           color: Colors.green.shade700,
+                                  //           fontWeight: FontWeight.w500,
+                                  //         ),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                               const SizedBox(height: 8),
@@ -296,13 +304,13 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
                                 children: [
                                   _buildInfoChip(
                                     icon: Icons.star_rounded,
-                                    label: "5.0 (90+)",
+                                    label: '${selectedBabysitter!['rating']}',
                                     iconColor: Colors.amber,
                                   ),
                                   const SizedBox(width: 8),
                                   _buildInfoChip(
-                                    icon: Icons.cases_outlined,
-                                    label: "3 yrs exp",
+                                    icon: Icons.access_time,
+                                    label: '${widget.duration} hr/s',
                                   ),
                                 ],
                               ),
@@ -336,6 +344,21 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                        Expanded(
+                          child: SizedBox(
+                            height: 46,
+                            child: AppButton(
+                              text: "Complete",
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  RouteAnimate(0.0, 1.0,
+                                      page: const TermsConditionsDialog()),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ],

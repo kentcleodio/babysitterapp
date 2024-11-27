@@ -1,3 +1,5 @@
+import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
+import 'package:babysitterapp/styles/route_animation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/user_model.dart';
@@ -85,7 +87,15 @@ class _TransactionNotificationCardState
   }
 
   void _viewStatus() {
-    // TODO: view current status
+    Navigator.push(
+      context,
+      RouteAnimate(0, -1.0,
+          page: BabysitterViewLocation(
+            duration: widget.duration,
+            selectedBabysitterName: widget.name,
+            totalPayment: widget.totalPayment,
+          )),
+    );
   }
 
   Color _getStatusColor(String status) {

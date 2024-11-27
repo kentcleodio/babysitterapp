@@ -341,7 +341,7 @@ class _UserViewLocationState extends State<UserViewLocation> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -408,7 +408,7 @@ class _UserViewLocationState extends State<UserViewLocation> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 10),
                       Row(
                         children: [
                           Expanded(
