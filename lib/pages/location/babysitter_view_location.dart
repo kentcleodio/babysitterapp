@@ -1,10 +1,8 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:babysitterapp/authentication/terms_condition.dart';
+import 'package:babysitterapp/pages/homepage/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-import 'package:babysitterapp/services/firestore.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:babysitterapp/styles/size.dart';
 
@@ -12,6 +10,7 @@ import '../../components/button.dart';
 import '../../services/location_service.dart';
 import '../../services/search_service.dart';
 import '../../styles/route_animation.dart';
+import '../rate/rateandreviewpage.dart';
 
 // ignore: must_be_immutable
 class BabysitterViewLocation extends StatefulWidget {
@@ -33,7 +32,6 @@ class BabysitterViewLocation extends StatefulWidget {
 class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
   // Services
   LocationService locationService = LocationService();
-  FirestoreService firestoreService = FirestoreService();
   SearchService searchService = SearchService();
 
   // selected babysitter
@@ -328,7 +326,7 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Rate per hour',
+                                'Total Payment',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
@@ -336,7 +334,7 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'P${selectedBabysitter!['rate']}/hr',
+                                'P${widget.totalPayment}',
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -346,16 +344,166 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
                             ],
                           ),
                         ),
+                        // Inside your existing widget/page
                         Expanded(
                           child: SizedBox(
                             height: 46,
                             child: AppButton(
                               text: "Complete",
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  RouteAnimate(0.0, 1.0,
-                                      page: const TermsConditionsDialog()),
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      elevation: 8,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(24),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                        ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            // Dialog Icon
+                                            CircleAvatar(
+                                              radius: 40,
+                                              backgroundColor: Theme.of(context)
+                                                  .primaryColor
+                                                  .withOpacity(0.1),
+                                              child: Icon(
+                                                Icons.star_rate_rounded,
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                                size: 50,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 16),
+
+                                            // Title
+                                            Text(
+                                              'Rate Your Babysitter',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.grey.shade800,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            const SizedBox(height: 12),
+
+                                            // Subtitle
+                                            Text(
+                                              'We value your feedback! Would you like to rate this babysitter?',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey.shade600,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            const SizedBox(height: 24),
+
+                                            // Action Buttons
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                // No Button
+                                                Expanded(
+                                                  child: OutlinedButton(
+                                                    onPressed: () =>
+                                                        Navigator.push(
+                                                      context,
+                                                      RouteAnimate(0.0, 1.0,
+                                                          page:
+                                                              const HomePage()),
+                                                    ),
+                                                    style: OutlinedButton
+                                                        .styleFrom(
+                                                      foregroundColor:
+                                                          Theme.of(context)
+                                                              .primaryColor,
+                                                      side: BorderSide(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .primaryColor),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                      ),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 12),
+                                                    ),
+                                                    child: const Text(
+                                                      'No, Thanks',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 16),
+
+                                                // Yes Button
+                                                Expanded(
+                                                  child: ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        RouteAnimate(
+                                                          0.0,
+                                                          1.0,
+                                                          page:
+                                                              RateAndReviewPage(
+                                                            babysitterName:
+                                                                '${widget.selectedBabysitterName}',
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor:
+                                                          Theme.of(context)
+                                                              .primaryColor,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                      ),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 12),
+                                                      elevation: 4,
+                                                    ),
+                                                    child: const Text(
+                                                      'Yes, Rate',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             ),
