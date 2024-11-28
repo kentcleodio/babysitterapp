@@ -121,4 +121,24 @@ class CurrentUserService {
       print("Error signing out: $e");
     }
   }
+
+  // add feedback to selected babysitter
+  Future<void> addFeedback({
+    required String currentUserName,
+    required String babysitterName,
+    required String feedbackMessage,
+    required int rating,
+  }) async {
+    try {
+      await firestore.collection('feedbacks').add({
+        'currentUserName': currentUserName,
+        'babysitterName': babysitterName,
+        'feedbackMessage': feedbackMessage,
+        'rating': rating,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Failed to add feedback: $e');
+    }
+  }
 }

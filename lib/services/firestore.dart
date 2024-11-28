@@ -114,46 +114,46 @@ class FirestoreService {
   }
 
   //add new feedback to firestore
-  Future<void> addFeedback(
-      String currentUserID, String recipientID, FeedBack feedback) async {
-    try {
-      // Reference to the messages document of the current user
-      DocumentReference<Map<String, dynamic>> feedbackDoc =
-          users.doc(recipientID).collection('feedbacks').doc(currentUserID);
+  // Future<void> addFeedback(
+  //     String currentUserID, String recipientID, FeedBack feedback) async {
+  //   try {
+  //     // Reference to the messages document of the current user
+  //     DocumentReference<Map<String, dynamic>> feedbackDoc =
+  //         users.doc(recipientID).collection('feedbacks').doc(currentUserID);
 
-      // Convert the message to a map
-      Map<String, dynamic> feedbackData = {
-        'rating': feedback.rating,
-        'msg': feedback.feedbackMsg,
-        'images': feedback.images,
-        'timestamp': feedback.timestamp,
-      };
+  //     // Convert the message to a map
+  //     Map<String, dynamic> feedbackData = {
+  //       'rating': feedback.rating,
+  //       'msg': feedback.feedbackMsg,
+  //       'images': feedback.images,
+  //       'timestamp': feedback.timestamp,
+  //     };
 
-      // Save the message to Firestore with a unique ID (e.g., by using the timestamp as a key)
-      await feedbackDoc.set(
-        feedbackData,
-        SetOptions(merge: false),
-      );
-    } on FirebaseException catch (e) {
-      print("Error adding message: $e");
-    }
-  }
+  //     // Save the message to Firestore with a unique ID (e.g., by using the timestamp as a key)
+  //     await feedbackDoc.set(
+  //       feedbackData,
+  //       SetOptions(merge: false),
+  //     );
+  //   } on FirebaseException catch (e) {
+  //     print("Error adding message: $e");
+  //   }
+  // }
 
   //fetch feedback list for babysitter
-  Future<List<FeedBack>> getFeedbackList(String babysitterId) async {
-    List<FeedBack> feedbackList = [];
+  // Future<List<FeedBack>> getFeedbackList(String babysitterId) async {
+  //   List<FeedBack> feedbackList = [];
 
-    QuerySnapshot querySnapshot =
-        await users.doc(babysitterId).collection('feedbacks').get();
+  //   QuerySnapshot querySnapshot =
+  //       await users.doc(babysitterId).collection('feedbacks').get();
 
-    for (var doc in querySnapshot.docs) {
-      // Convert each document data into a FeedBack instance
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      FeedBack feedback = FeedBack.fromMap(
-          data..['id'] = doc.id); // Use document ID as feedback ID
-      feedbackList.add(feedback);
-    }
+  //   for (var doc in querySnapshot.docs) {
+  //     // Convert each document data into a FeedBack instance
+  //     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+  //     FeedBack feedback = FeedBack.fromMap(
+  //         data..['id'] = doc.id); // Use document ID as feedback ID
+  //     feedbackList.add(feedback);
+  //   }
 
-    return feedbackList;
-  }
+  //   return feedbackList;
+  // }
 }

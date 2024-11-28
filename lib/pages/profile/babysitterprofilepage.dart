@@ -1,5 +1,6 @@
 import 'package:babysitterapp/pages/booking/requestpage.dart';
 import 'package:babysitterapp/pages/chat/chatboxpage.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/user_model.dart';
 import '../../services/babysitter_service.dart';
@@ -23,17 +24,20 @@ class BabysitterProfilePage extends StatefulWidget {
 }
 
 class _BabysitterProfilePageState extends State<BabysitterProfilePage> {
-  // call firestore service
+  // Services
   CurrentUserService firestoreService = CurrentUserService();
   final BabysitterService babysitterService = BabysitterService();
-  // get data from firestore using the model
+
+  // Data Models
   UserModel? currentUser;
   UserModel? babysitter;
+  List<Map<String, dynamic>> feedbackList = [];
+  bool isLoadingFeedback = true;
 
-  // custom widget
+  // Custom Widget
   final CustomWidget customWidget = CustomWidget();
 
-  // load user data
+  // Load user data
   Future<void> loadUserData() async {
     final user = await firestoreService.loadUserData();
     setState(() {
@@ -41,61 +45,42 @@ class _BabysitterProfilePageState extends State<BabysitterProfilePage> {
     });
   }
 
-  // load babysitter data using email
+  // Load babysitter data
   Future<void> loadBabysitter() async {
     final UserModel? fetchedBabysitter =
         await babysitterService.getBabysitterByEmail(widget.babysitterID);
     setState(() {
       babysitter = fetchedBabysitter;
     });
+
+    if (fetchedBabysitter != null) {
+      loadFeedbacks(fetchedBabysitter.name);
+    }
   }
 
-  // initiate load
+  // Load babysitter feedbacks
+  Future<void> loadFeedbacks(String babysitterName) async {
+    try {
+      final feedbacks = await babysitterService
+          .fetchFeedbacksByBabysitterName(babysitterName);
+      setState(() {
+        feedbackList = feedbacks;
+      });
+    } catch (e) {
+      // Handle error (e.g., log it or show a snackbar)
+    } finally {
+      setState(() {
+        isLoadingFeedback = false;
+      });
+    }
+  }
+
+  // Initiate loading in initState
   @override
   void initState() {
     super.initState();
     loadUserData();
     loadBabysitter();
-  }
-
-  // !!! Code below is dummy implementation of data, 11/25
-  // final FirestoreService firestoreService = FirestoreService();
-  // final UserData userData = UserData();
-  // final CustomWidget customWidget = CustomWidget();
-  // late User? babysitter;
-  // late List<FeedBack>? feedbackList;
-  // late double babysitterRating;
-  // late int noOfReviews;
-  // late bool isExpanded;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   fetchUserData();
-  //   babysitter = null;
-  //   feedbackList = [];
-  //   babysitterRating = 0;
-  //   noOfReviews = 0;
-  //   isExpanded = false;
-  // }
-
-  // //fetch babysitter data based on babysitterID
-  // Future<void> fetchUserData() async {
-  //   babysitter = await firestoreService.getUserData(widget.babysitterID);
-  //   feedbackList = await firestoreService.getFeedbackList(widget.babysitterID);
-  //   if (feedbackList != null && feedbackList!.isNotEmpty) {
-  //     noOfReviews = feedbackList!.length;
-  //     babysitterRating =
-  //         (feedbackList!.fold(0, (sum, item) => sum + item.rating)) /
-  //             feedbackList!.length;
-  //   }
-  //   setState(() {});
-  // }
-  // !!!
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -174,7 +159,7 @@ class _BabysitterProfilePageState extends State<BabysitterProfilePage> {
                   babysitter!.gender ?? 'Unknown Gender',
                   babysitter!.rate!,
                   babysitter!.rating ?? 0.0,
-                  10, // Replace with actual number of reviews,
+                  feedbackList.length,
                 ),
                 customWidget.aboutHeader(
                   babysitter!.name.split(' ')[0],
@@ -187,9 +172,54 @@ class _BabysitterProfilePageState extends State<BabysitterProfilePage> {
                   },
                 ),
                 customWidget.myDivider(),
-                customWidget.experienceHeader(babysitter!.experience ?? []),
-                customWidget.myDivider(),
-                customWidget.feedbackHeader(widget.babysitterID, []),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(20, 20, 20, 60),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Feedback',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      isLoadingFeedback
+                          ? const CircularProgressIndicator()
+                          : (feedbackList.isNotEmpty)
+                              ? CarouselSlider(
+                                  items: feedbackList.map((feedback) {
+                                    return carouselItem(
+                                      context,
+                                      currentUser!.img ?? '',
+                                      feedback['currentUserName'] ??
+                                          'Anonymous',
+                                      feedback['rating'] ?? 0,
+                                      feedback['feedbackMessage'] ?? '',
+                                      feedback['images'] ?? [],
+                                    );
+                                  }).toList(),
+                                  options: CarouselOptions(
+                                    viewportFraction: .9,
+                                    height: 500,
+                                    autoPlay: feedbackList.length > 1,
+                                    enableInfiniteScroll:
+                                        feedbackList.length > 1,
+                                    enlargeCenterPage: true,
+                                  ),
+                                )
+                              : const Padding(
+                                  padding: EdgeInsets.all(40),
+                                  child: Text('No feedback yet'),
+                                ),
+                      // feedbackList.isNotEmpty
+                      //     ? TextButton(
+                      //         onPressed: () {},
+                      //         child: const Text('See all reviews'),
+                      //       )
+                      //     : Container(),
+                    ],
+                  ),
+                ),
               ],
             ),
           )
@@ -199,4 +229,98 @@ class _BabysitterProfilePageState extends State<BabysitterProfilePage> {
             ),
           );
   }
+
+  Widget carouselItem(BuildContext context, String? img, String name,
+      int rating, String feedback, List? images) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (img != null)
+          CircleAvatar(
+            backgroundImage: AssetImage(img),
+            radius: 40,
+          ),
+        Text(
+          name,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        ratingStar(rating, 30, primaryColor),
+        Text(
+          feedback,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        Wrap(
+            children: (images != null)
+                ? images.map((image) {
+                    return Padding(
+                      padding: const EdgeInsets.all(3),
+                      child: InkWell(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                              backgroundColor: backgroundColor.withOpacity(0),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Image.asset(
+                                    image,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  Positioned(
+                                    top: 1.0,
+                                    left: 1.0,
+                                    child: IconButton(
+                                      icon: const Icon(
+                                        Icons.clear,
+                                        color: backgroundColor,
+                                        size: 30,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        child: Image.asset(
+                          image,
+                          height: (images.length == 1) ? 250 : 120,
+                          width: (images.length == 1) ? 250 : 120,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  }).toList()
+                : []),
+      ],
+    );
+  }
+
+  //rating star icon
+  Widget ratingStar(i, double size_, Color starColor) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (int x = 0; x < i; x++)
+            Icon(
+              Icons.star,
+              color: starColor,
+              size: size_,
+            ),
+          for (int y = 0; y < 5 - i; y++)
+            Icon(
+              Icons.star,
+              color: Colors.grey,
+              size: size_,
+            ),
+        ],
+      );
 }

@@ -40,4 +40,20 @@ class BabysitterService {
       return null;
     }
   }
+
+  // load babysitters feedbacks
+  Future<List<Map<String, dynamic>>> fetchFeedbacksByBabysitterName(
+      String babysitterName) async {
+    try {
+      final querySnapshot = await _firestore
+          .collection('feedbacks')
+          .where('babysitterName', isEqualTo: babysitterName)
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      return querySnapshot.docs.map((doc) => doc.data()).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch feedbacks: $e');
+    }
+  }
 }

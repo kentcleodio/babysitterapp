@@ -40,80 +40,80 @@ class CustomWidget {
       );
 
 //carousel item for feedback header
-  Widget carouselItem(BuildContext context, String? img, String name,
-      int rating, String feedback, List? images) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (img != null)
-          CircleAvatar(
-            backgroundImage: AssetImage(img),
-            radius: 40,
-          ),
-        Text(
-          name,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        ratingStar(rating, 30, primaryColor),
-        Text(
-          feedback,
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        Wrap(
-            children: (images != null)
-                ? images.map((image) {
-                    return Padding(
-                      padding: const EdgeInsets.all(3),
-                      child: InkWell(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => Dialog(
-                              backgroundColor: backgroundColor.withOpacity(0),
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Image.asset(
-                                    image,
-                                    fit: BoxFit.contain,
-                                  ),
-                                  Positioned(
-                                    top: 1.0,
-                                    left: 1.0,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.clear,
-                                        color: backgroundColor,
-                                        size: 30,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                        child: Image.asset(
-                          image,
-                          height: (images.length == 1) ? 250 : 120,
-                          width: (images.length == 1) ? 250 : 120,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  }).toList()
-                : []),
-      ],
-    );
-  }
+  // Widget carouselItem(BuildContext context, String? img, String name,
+  //     int rating, String feedback, List? images) {
+  //   return Column(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: [
+  //       if (img != null)
+  //         CircleAvatar(
+  //           backgroundImage: AssetImage(img),
+  //           radius: 40,
+  //         ),
+  //       Text(
+  //         name,
+  //         style: const TextStyle(
+  //           fontWeight: FontWeight.bold,
+  //           fontSize: 16,
+  //         ),
+  //       ),
+  //       ratingStar(rating, 30, primaryColor),
+  //       Text(
+  //         feedback,
+  //         textAlign: TextAlign.center,
+  //         maxLines: 2,
+  //         overflow: TextOverflow.ellipsis,
+  //       ),
+  //       Wrap(
+  //           children: (images != null)
+  //               ? images.map((image) {
+  //                   return Padding(
+  //                     padding: const EdgeInsets.all(3),
+  //                     child: InkWell(
+  //                       onTap: () {
+  //                         showDialog(
+  //                           context: context,
+  //                           builder: (context) => Dialog(
+  //                             backgroundColor: backgroundColor.withOpacity(0),
+  //                             child: Stack(
+  //                               alignment: Alignment.center,
+  //                               children: [
+  //                                 Image.asset(
+  //                                   image,
+  //                                   fit: BoxFit.contain,
+  //                                 ),
+  //                                 Positioned(
+  //                                   top: 1.0,
+  //                                   left: 1.0,
+  //                                   child: IconButton(
+  //                                     icon: const Icon(
+  //                                       Icons.clear,
+  //                                       color: backgroundColor,
+  //                                       size: 30,
+  //                                     ),
+  //                                     onPressed: () {
+  //                                       Navigator.of(context).pop();
+  //                                     },
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         );
+  //                       },
+  //                       child: Image.asset(
+  //                         image,
+  //                         height: (images.length == 1) ? 250 : 120,
+  //                         width: (images.length == 1) ? 250 : 120,
+  //                         fit: BoxFit.cover,
+  //                       ),
+  //                     ),
+  //                   );
+  //                 }).toList()
+  //               : []),
+  //     ],
+  //   );
+  // }
 
   //divider for profile page
   Widget myDivider() => const Divider(
@@ -331,71 +331,70 @@ class CustomWidget {
           ],
         ),
       );
-  //feedback header for profile page
-  feedbackHeader(String babysitterId_, List<FeedBack>? feedbackList) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 20, 20, 60),
-      child: Column(
-        children: [
-          const Text(
-            'Feedback',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          (feedbackList != null)
-              ? CarouselSlider(
-                  items: feedbackList.map((feedback) {
-                    return FutureBuilder(
-                      future: firestoreService.getUserData(
-                          feedback.id), // Fetch user data for each feedback
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const CircularProgressIndicator(); // Loading indicator
-                        }
-                        if (!snapshot.hasData) {
-                          return const Text('Error');
-                        }
+  // feedback header for profile page
+  // feedbackHeader(String babysitterEmail, List<FeedBack>? feedbackList) {
+  //   return Container(
+  //     margin: const EdgeInsets.fromLTRB(20, 20, 20, 60),
+  //     child: Column(
+  //       children: [
+  //         const Text(
+  //           'Feedback',
+  //           style: TextStyle(
+  //             fontWeight: FontWeight.bold,
+  //             fontSize: 16,
+  //           ),
+  //         ),
+  //         (feedbackList != null)
+  //             ? CarouselSlider(
+  //                 items: feedbackList.map((feedback) {
+  //                   return FutureBuilder(
+  //                     future: fetchUserData(feedback.userId), // Fetch user data
+  //                     builder: (context, snapshot) {
+  //                       if (snapshot.connectionState ==
+  //                           ConnectionState.waiting) {
+  //                         return const CircularProgressIndicator();
+  //                       }
+  //                       if (snapshot.hasError || !snapshot.hasData) {
+  //                         return const Text('Error loading user data');
+  //                       }
 
-                        // Assuming user data model has fields `img` and `name`
-                        User? user = snapshot.data;
-
-                        return carouselItem(
-                          context,
-                          user!.img,
-                          user.name,
-                          feedback.rating,
-                          feedback.feedbackMsg ?? 'No data',
-                          feedback.images,
-                        );
-                      },
-                    );
-                  }).toList(),
-                  options: CarouselOptions(
-                    viewportFraction: .9,
-                    height: 500,
-                    autoPlay: (feedbackList.length > 1) ? true : false,
-                    enableInfiniteScroll:
-                        (feedbackList.length > 1) ? true : false,
-                    enlargeCenterPage: true,
-                  ),
-                )
-              : const Padding(
-                  padding: EdgeInsets.all(40),
-                  child: Text('No feedback yet'),
-                ),
-          (feedbackList != null)
-              ? TextButton(
-                  onPressed: () {},
-                  child: const Text('See all reviews'),
-                )
-              : Container(),
-        ],
-      ),
-    );
-  }
+  //                       // Assuming user data has keys `img` and `name`
+  //                       final userData = snapshot.data as Map<String, dynamic>;
+  //                       return carouselItem(
+  //                         context,
+  //                         userData['img'] ?? '', // User's profile image
+  //                         userData['name'] ?? 'Unknown User', // User's name
+  //                         feedback.rating, // Feedback rating
+  //                         feedback.feedbackMsg ??
+  //                             'No message', // Feedback message
+  //                         feedback.images, // Feedback images
+  //                       );
+  //                     },
+  //                   );
+  //                 }).toList(),
+  //                 options: CarouselOptions(
+  //                   viewportFraction: .9,
+  //                   height: 500,
+  //                   autoPlay: (feedbackList.length > 1) ? true : false,
+  //                   enableInfiniteScroll:
+  //                       (feedbackList.length > 1) ? true : false,
+  //                   enlargeCenterPage: true,
+  //                 ),
+  //               )
+  //             : const Padding(
+  //                 padding: EdgeInsets.all(40),
+  //                 child: Text('No feedback yet'),
+  //               ),
+  //         (feedbackList != null)
+  //             ? TextButton(
+  //                 onPressed: () {},
+  //                 child: const Text('See all reviews'),
+  //               )
+  //             : Container(),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   //rating star icon
   Widget ratingStar(i, double size_, Color starColor) => Row(

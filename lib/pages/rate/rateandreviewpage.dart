@@ -1,46 +1,73 @@
 import 'dart:io';
 
-import 'package:babysitterapp/controller/feedback.dart';
 import 'package:collection/collection.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../models/user_model.dart';
+import '../../services/current_user_service.dart';
+import '../../services/search_service.dart';
 import '/pages/homepage/home_page.dart';
-import '/services/firestore.dart';
-import '/controller/user.dart';
 import '/views/customwidget.dart';
 import '/components/button.dart';
 import '/styles/colors.dart';
 import 'package:flutter/material.dart';
 
 class RateAndReviewPage extends StatefulWidget {
-  final String babysitterID;
-  final String currenUserID = 'rWh0SYzwFHeQD8UuScWsRkeagT83';
-  const RateAndReviewPage({super.key, required this.babysitterID});
+  final String babysitterName;
+  const RateAndReviewPage({super.key, required this.babysitterName});
 
   @override
   State<RateAndReviewPage> createState() => _RateAndReviewPageState();
 }
 
 class _RateAndReviewPageState extends State<RateAndReviewPage> {
-  final FirestoreService firestoreService = FirestoreService();
-  late User? babysitter;
-  final CustomWidget customWidget = CustomWidget();
+  // custom widgets
+  CustomWidget customWidget = CustomWidget();
+  // call firestore services
+  CurrentUserService firestoreService = CurrentUserService();
+  SearchService searchService = SearchService();
+
+  // get data from firestore using the model
+  UserModel? currentUser;
+  // selected babysitter
+  Map<String, dynamic>? selectedBabysitter;
+
+  // !
   final TextEditingController _feedbackController = TextEditingController();
   int _rating = 0;
   final List<File> _images = []; // List to store selected images
   final ImagePicker _picker = ImagePicker();
 
-  @override
-  void initState() {
-    babysitter = null;
-    fetchUserData();
-    super.initState();
+  // load user data
+  Future<void> loadUserData() async {
+    final user = await firestoreService.loadUserData();
+    setState(() {
+      currentUser = user;
+    });
   }
 
-  //fetch babysitter data based on babysitterID
-  Future<void> fetchUserData() async {
-    babysitter = await firestoreService.getUserData(widget.babysitterID);
-    setState(() {});
+  // initiate load
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+    fetchSelectedBabysitterByName(widget.babysitterName);
+  }
+
+  // Fetch data from the selected babysitter
+  Future<void> fetchSelectedBabysitterByName(String babysitterName) async {
+    try {
+      // Fetch babysitter details by name
+      final babysitterData =
+          await searchService.fetchBabysitterByName(babysitterName);
+
+      // Update the selected babysitter state
+      setState(() {
+        selectedBabysitter = babysitterData;
+      });
+    } catch (e) {
+      print('Error fetching selected babysitter by name: $e');
+    }
   }
 
   // Function to pick an image from the gallery or camera
@@ -56,44 +83,13 @@ class _RateAndReviewPageState extends State<RateAndReviewPage> {
     }
   }
 
-  //store current user new feedback
-  addFeedback(String? message, int rating, List<File>? images) async {
-    FeedBack newFeedBack = FeedBack(
-      id: widget.currenUserID,
-      rating: rating,
-      feedbackMsg: message,
-      images: [
-        'assets/images/feedback1.jpg',
-        'assets/images/feedback2.jpg',
-        'assets/images/feedback3.jpg',
-        'assets/images/feedback4.jpg'
-      ],
-      timestamp: DateTime.now(),
-    );
-
-    // Add the new feedback to babysitter feedback collection
-    await firestoreService.addFeedback(
-        widget.currenUserID, widget.babysitterID, newFeedBack);
-
-    setState(() {
-      _rating = 0;
-      _images.clear();
-    });
-    _feedbackController.clear();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rate Babysitter'),
       ),
-      body: (babysitter != null)
+      body: (selectedBabysitter != null)
           ? Center(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -102,12 +98,12 @@ class _RateAndReviewPageState extends State<RateAndReviewPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircleAvatar(
-                        backgroundImage: AssetImage(babysitter!.img),
+                        backgroundImage: AssetImage(selectedBabysitter!['img']),
                         radius: 70,
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        babysitter!.name,
+                        selectedBabysitter!['name'],
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 24,
@@ -280,15 +276,24 @@ class _RateAndReviewPageState extends State<RateAndReviewPage> {
                                   primaryColor,
                                   primaryColor,
                                   backgroundColor,
-                                  () {
+                                  () async {
                                     if (_rating != 0) {
-                                      Navigator.pop(context);
-
+                                      // ! deprecated add feedback function
                                       //add feedback to firestore
-                                      addFeedback(
-                                        _feedbackController.text,
-                                        _rating,
-                                        _images,
+                                      // addFeedback(
+                                      //   _feedbackController.text,
+                                      //   _rating,
+                                      //   _images,
+                                      // );
+
+                                      // add feedback to selectedbabysitter
+                                      await firestoreService.addFeedback(
+                                        currentUserName: currentUser!.name,
+                                        babysitterName:
+                                            selectedBabysitter!['name'],
+                                        feedbackMessage:
+                                            _feedbackController.text,
+                                        rating: _rating,
                                       );
 
                                       //display thankyou modal

@@ -91,6 +91,7 @@ class _TransactionNotificationCardState
       context,
       RouteAnimate(0, -1.0,
           page: BabysitterViewLocation(
+            parentName: widget.parentName,
             duration: widget.duration,
             selectedBabysitterName: widget.name,
             totalPayment: widget.totalPayment,
@@ -200,35 +201,56 @@ class _TransactionNotificationCardState
                     ),
                   ),
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: _handleDecline,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red.shade100,
-                            foregroundColor: Colors.red,
-                          ),
-                          child: const Text('Decline'),
+                // show view status if babysitter accepted the booking
+                widget.paymentStatus != 'accepted'
+                    ? Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 8.0, left: 8.0, right: 8.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: _handleDecline,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red.shade100,
+                                  foregroundColor: Colors.red,
+                                ),
+                                child: const Text('Decline'),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: _handleAccept,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green.shade100,
+                                  foregroundColor: Colors.green,
+                                ),
+                                child: const Text('Accept'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 8.0, left: 8.0, right: 8.0),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: _viewStatus,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green.shade100,
+                                  foregroundColor: Colors.green,
+                                ),
+                                child: const Text('View Status'),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: _handleAccept,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green.shade100,
-                            foregroundColor: Colors.green,
-                          ),
-                          child: const Text('Accept'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           )
