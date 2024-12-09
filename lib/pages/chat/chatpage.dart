@@ -107,7 +107,9 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               CircleAvatar(
                 radius: 30,
-                backgroundImage: AssetImage(recipient.img),
+                backgroundImage: recipient.img != ""
+                    ? AssetImage(recipient.img)
+                    : const AssetImage('assets/images/default_user.png'),
               ),
               const SizedBox(width: 15),
               Expanded(

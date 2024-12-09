@@ -70,7 +70,10 @@ class _SettingsPageState extends State<SettingsPage> {
                             height: 70,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage(currentUser!.img!),
+                                image: currentUser!.img! != ""
+                                    ? AssetImage(currentUser!.img!)
+                                    : const AssetImage(
+                                        'assets/images/default_user.png'),
                                 fit: BoxFit.cover,
                               ),
                             ),

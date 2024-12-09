@@ -261,11 +261,17 @@ class _UserViewLocationState extends State<UserViewLocation> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ClipOval(
-              child: Image.asset(
-                babysitter!.img!,
+              child: Container(
                 width: 30,
                 height: 30,
-                fit: BoxFit.cover,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: babysitter!.img != ""
+                        ? AssetImage(babysitter.img!)
+                        : const AssetImage('assets/images/default_user.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 4),
@@ -350,9 +356,11 @@ class _UserViewLocationState extends State<UserViewLocation> {
                           // Profile Image Section
                           CircleAvatar(
                             backgroundColor: Colors.transparent,
-                            radius: 40,
-                            backgroundImage:
-                                AssetImage(selectedBabysitter!.img ?? ''),
+                            radius: 30,
+                            backgroundImage: selectedBabysitter!.img != ""
+                                ? AssetImage(selectedBabysitter!.img!)
+                                : const AssetImage(
+                                    'assets/images/default_user.png'),
                           ),
                           const SizedBox(width: 16),
                           Expanded(

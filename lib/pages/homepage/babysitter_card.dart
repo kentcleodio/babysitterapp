@@ -5,7 +5,7 @@ class BabysitterCard extends StatelessWidget {
   final double rate;
   final double rating;
   final int reviews;
-  final String profileImage;
+  final String? profileImage;
   // final IconButton heartIcon;
 
   const BabysitterCard({
@@ -14,7 +14,7 @@ class BabysitterCard extends StatelessWidget {
     required this.rate,
     required this.rating,
     required this.reviews,
-    this.profileImage = 'assets/avatar.png',
+    this.profileImage,
     // required this.heartIcon,
   });
 
@@ -29,8 +29,10 @@ class BabysitterCard extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(
-          backgroundImage: AssetImage(profileImage),
           radius: 30,
+          backgroundImage: profileImage != ""
+              ? AssetImage(profileImage!)
+              : const AssetImage('assets/images/default_user.png'),
         ),
         title: Row(
           children: [

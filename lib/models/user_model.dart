@@ -22,23 +22,24 @@ class UserModel {
   List? experience;
   double? rating;
   double? rate;
+  List? availability;
 
-  UserModel({
-    required this.role,
-    required this.email,
-    required this.name,
-    required this.phone,
-    this.img,
-    this.gender,
-    this.location,
-    this.address,
-    this.information,
-    this.age,
-    this.childAge,
-    this.experience,
-    this.rating,
-    this.rate,
-  });
+  UserModel(
+      {required this.role,
+      required this.email,
+      required this.name,
+      required this.phone,
+      this.img,
+      this.gender,
+      this.location,
+      this.address,
+      this.information,
+      this.age,
+      this.childAge,
+      this.experience,
+      this.rating,
+      this.rate,
+      this.availability});
 
   // Convert UserModel to Map
   Map<String, dynamic> toMap() {
@@ -57,27 +58,28 @@ class UserModel {
       'experience': experience ?? [],
       'rating': rating ?? 0.0,
       'rate': rate ?? 0.0,
+      'availability': availability ?? []
     };
   }
 
   // Create UserModel from Map
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      role: map['role'] ?? '',
-      email: map['email'] ?? '',
-      name: map['name'] ?? '',
-      phone: map['phone'] ?? '',
-      img: map['img'],
-      gender: map['gender'],
-      location: map['location'],
-      address: map['address'],
-      information: map['information'],
-      age: map['age']?.toDate(), // Convert Timestamp to DateTime
-      childAge: map['childAge'],
-      experience: map['experience'],
-      rating: map['rating']?.toDouble(),
-      rate: map['rate']?.toDouble(),
-    );
+        role: map['role'] ?? '',
+        email: map['email'] ?? '',
+        name: map['name'] ?? '',
+        phone: map['phone'] ?? '',
+        img: map['img'],
+        gender: map['gender'],
+        location: map['location'],
+        address: map['address'],
+        information: map['information'],
+        age: map['age']?.toDate(), // Convert Timestamp to DateTime
+        childAge: map['childAge'],
+        experience: map['experience'],
+        rating: map['rating']?.toDouble(),
+        rate: map['rate']?.toDouble(),
+        availability: map['availability']);
   }
 
   // Add copyWith method
@@ -96,22 +98,23 @@ class UserModel {
     List? experience,
     double? rating,
     double? rate,
+    List? availability,
   }) {
     return UserModel(
-      role: role ?? this.role,
-      email: email ?? this.email,
-      name: name ?? this.name,
-      phone: phone ?? this.phone,
-      img: img ?? this.img,
-      gender: gender ?? this.gender,
-      location: location ?? this.location,
-      address: address ?? this.address,
-      information: information ?? this.information,
-      age: age ?? this.age,
-      childAge: childAge ?? this.childAge,
-      experience: experience ?? this.experience,
-      rating: rating ?? this.rating,
-      rate: rate ?? this.rate,
-    );
+        role: role ?? this.role,
+        email: email ?? this.email,
+        name: name ?? this.name,
+        phone: phone ?? this.phone,
+        img: img ?? this.img,
+        gender: gender ?? this.gender,
+        location: location ?? this.location,
+        address: address ?? this.address,
+        information: information ?? this.information,
+        age: age ?? this.age,
+        childAge: childAge ?? this.childAge,
+        experience: experience ?? this.experience,
+        rating: rating ?? this.rating,
+        rate: rate ?? this.rate,
+        availability: availability ?? this.availability);
   }
 }

@@ -124,7 +124,7 @@ class CustomWidget {
   Widget mainHeader(
     String name,
     String email,
-    String img,
+    String? img,
     String address,
     DateTime birtdate,
     String gender,
@@ -163,8 +163,10 @@ class CustomWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
-                backgroundImage: AssetImage(img),
                 radius: 80,
+                backgroundImage: img != ""
+                    ? AssetImage(img!)
+                    : const AssetImage('assets/images/default_user.png'),
               ),
               const SizedBox(height: 20),
               Text(
