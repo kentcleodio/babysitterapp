@@ -1,5 +1,6 @@
 import 'package:babysitterapp/authentication/terms_page.dart';
 import 'package:babysitterapp/pages/account/account_page.dart';
+import 'package:babysitterapp/pages/available/available_page.dart';
 import 'package:babysitterapp/pages/help_and_support/help_and_support_page.dart';
 import 'package:babysitterapp/pages/transaction/transaction_history_page.dart';
 import 'package:babysitterapp/styles/colors.dart';
@@ -127,6 +128,19 @@ class _SettingsPageState extends State<SettingsPage> {
                                 builder: (context) =>
                                     const TransactionHistoryPage()));
                           }),
+
+                      // settings item specifically for babysitters
+                      currentUser != null &&
+                              currentUser?.role.toLowerCase() != 'parent'
+                          ? SettingsItem(
+                              icon: Icons.event_available,
+                              label: 'Availability & Rate',
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        const AvailabilityPage()));
+                              })
+                          : Container()
                     ],
                   ),
                   SettingsSection(
