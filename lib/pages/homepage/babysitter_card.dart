@@ -4,7 +4,8 @@ class BabysitterCard extends StatelessWidget {
   final String name;
   final double rate;
   final double rating;
-  final int reviews;
+  final String gender;
+  final DateTime birthdate;
   final String? profileImage;
   // final IconButton heartIcon;
 
@@ -13,10 +14,25 @@ class BabysitterCard extends StatelessWidget {
     required this.name,
     required this.rate,
     required this.rating,
-    required this.reviews,
+    required this.gender,
+    required this.birthdate,
     this.profileImage,
     // required this.heartIcon,
   });
+
+// calculate age
+  int calculateAge(DateTime birthDate) {
+    final today = DateTime.now();
+    int age = today.year - birthDate.year;
+
+    // Adjust if the birthday hasn't occurred yet this year
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+
+    return age;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,26 +71,47 @@ class BabysitterCard extends StatelessWidget {
             ),
           ],
         ),
-        subtitle: Row(
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              Icons.star,
-              color: Theme.of(context).colorScheme.primary,
-              size: 18,
+            Row(
+              children: [
+                Text(
+                  '$gender, ',
+                  style: TextStyle(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
+                ),
+                Text(
+                  calculateAge(birthdate).toString(),
+                  style: TextStyle(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 4),
-            Text(
-              rating.toStringAsFixed(1),
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              ' / $reviews reviews',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
+            Row(
+              children: [
+                Icon(
+                  Icons.star,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 18,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  rating.toStringAsFixed(1),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             // const Spacer(),
             // IconButton(

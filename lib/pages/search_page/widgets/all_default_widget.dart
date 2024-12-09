@@ -70,7 +70,8 @@ class _AllDefaultWidgetState extends State<AllDefaultWidget> {
               name: babysitter.name,
               rate: babysitter.rate!,
               rating: babysitter.rating!,
-              reviews: 10, // Adjust or fetch reviews count dynamically
+              gender: babysitter.gender!,
+              birthdate: babysitter.age!,
               profileImage: babysitter.img ?? 'default_image_url',
 
               // TODO: implementation of favorite babysitter

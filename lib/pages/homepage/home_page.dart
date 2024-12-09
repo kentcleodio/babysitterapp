@@ -133,7 +133,8 @@ class _HomePageState extends State<HomePage> {
                       name: babysitter.name,
                       rate: babysitter.rate!,
                       rating: babysitter.rating!,
-                      reviews: 10, // Adjust or fetch reviews count dynamically
+                      gender: babysitter.gender!,
+                      birthdate: babysitter.age!,
                       profileImage: babysitter.img ?? 'default_image_url',
 
                       // TODO: implementation of favorite babysitter
@@ -217,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   SizedBox(height: screenHeight * 0.01),
                   _buildBabysitterSection(
-                      context, 'Top Rated Babysitters', _babysitters),
+                      context, 'Available Babysitters', _babysitters),
                   // _buildTransactionSection(
                   //     context, 'Total Transaction', transactions),
                   // _buildAnalyticsSection(context),
