@@ -16,7 +16,7 @@ class UserModel {
   DateTime? age;
 
   // parent-specific
-  int? childAge;
+  String? childAge;
 
   // babysitter-specific
   List? experience;
@@ -54,7 +54,7 @@ class UserModel {
       'address': address ?? '',
       'information': information ?? 'No information provided',
       'age': age ?? DateTime(2000, 1, 1),
-      'childAge': childAge ?? 0,
+      'childAge': childAge ?? "",
       'experience': experience ?? [],
       'rating': rating ?? 0.0,
       'rate': rate ?? 0.0,
@@ -94,7 +94,7 @@ class UserModel {
     String? address,
     String? information,
     DateTime? age,
-    int? childAge,
+    String? childAge,
     List? experience,
     double? rating,
     double? rate,

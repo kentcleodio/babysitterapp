@@ -257,6 +257,24 @@ class _AccountPageState extends State<AccountPage> {
                       enabled: _isEditing,
                       maxLines: 3,
                     ),
+                    const SizedBox(height: 20),
+
+                    // add logic to differentiate current users
+                    currentUser != null &&
+                            currentUser?.role.toLowerCase() != 'babysitter'
+                        ?
+                        // if current user is a parent, they will get this form field
+                        _buildAgeInputField(
+                            label: "Child Age",
+                            initialValue: currentUser!.childAge,
+                            onSaved: (value) => currentUser!.childAge = value,
+                            validator:
+                                null, // Add validation logic here if needed
+                          )
+                        :
+                        // if current user is a babysitter, they will get this form field
+                        Container(),
+
                     const SizedBox(height: 30),
                   ],
                 ),
@@ -404,6 +422,63 @@ class _AccountPageState extends State<AccountPage> {
         labelText: label,
         suffixIcon: const Icon(Icons.calendar_today),
       ),
+    );
+  }
+
+  Widget _buildAgeInputField({
+    required String label,
+    required String? initialValue,
+    required FormFieldSetter<String> onSaved,
+    FormFieldValidator<String>? validator,
+  }) {
+    String dropdownValue = "years"; // Default dropdown value
+    TextEditingController ageController = TextEditingController();
+
+    if (initialValue != null && initialValue.isNotEmpty) {
+      // Split the initialValue into age and unit if it exists
+      final parts = initialValue.split(" ");
+      if (parts.length == 2) {
+        ageController.text = parts[0];
+        dropdownValue = parts[1];
+      }
+    }
+
+    return FormField<String>(
+      initialValue: initialValue,
+      validator: validator,
+      onSaved: (value) {
+        final concatenatedValue = "${ageController.text} $dropdownValue";
+        onSaved(concatenatedValue);
+      },
+      builder: (field) {
+        return TextFormField(
+          enabled: _isEditing,
+          controller: ageController,
+          keyboardType: TextInputType.number,
+          decoration: _defaultInputDecoration.copyWith(
+            labelText: label,
+            errorText: field.errorText,
+            suffixIcon: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: dropdownValue,
+                items: const [
+                  DropdownMenuItem(value: "months", child: Text("months")),
+                  DropdownMenuItem(value: "years", child: Text("years")),
+                ],
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    dropdownValue = newValue;
+                    field.didChange("${ageController.text} $dropdownValue");
+                  }
+                },
+              ),
+            ),
+          ),
+          onChanged: (value) {
+            field.didChange("${value.isNotEmpty ? value : ""} $dropdownValue");
+          },
+        );
+      },
     );
   }
 }
