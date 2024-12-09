@@ -424,7 +424,7 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
 
                                                   // Subtitle
                                                   Text(
-                                                    'We value your feedback! Would you like to rate this babysitter?',
+                                                    'We value your feedback! Please rate this babysitter',
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       color:
@@ -440,52 +440,6 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
                                                         MainAxisAlignment
                                                             .center,
                                                     children: [
-                                                      // No Button
-                                                      Expanded(
-                                                        child: OutlinedButton(
-                                                          onPressed: () =>
-                                                              Navigator.push(
-                                                            context,
-                                                            RouteAnimate(
-                                                                0.0, 1.0,
-                                                                page:
-                                                                    const HomePage()),
-                                                          ),
-                                                          style: OutlinedButton
-                                                              .styleFrom(
-                                                            foregroundColor:
-                                                                Theme.of(
-                                                                        context)
-                                                                    .primaryColor,
-                                                            side: BorderSide(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .primaryColor),
-                                                            shape:
-                                                                RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12),
-                                                            ),
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        12),
-                                                          ),
-                                                          child: const Text(
-                                                            'No, Thanks',
-                                                            style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 16),
-
                                                       // Yes Button
                                                       Expanded(
                                                         child: ElevatedButton(
@@ -524,7 +478,7 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
                                                             elevation: 4,
                                                           ),
                                                           child: const Text(
-                                                            'Yes, Rate',
+                                                            'Rate',
                                                             style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
