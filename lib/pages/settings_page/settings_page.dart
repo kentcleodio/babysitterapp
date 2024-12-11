@@ -134,7 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               currentUser?.role.toLowerCase() != 'parent'
                           ? SettingsItem(
                               icon: Icons.event_available,
-                              label: 'Availability & Rate',
+                              label: 'Availability',
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
