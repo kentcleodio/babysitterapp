@@ -3,6 +3,8 @@ import 'package:babysitterapp/pages/requirement/requirement_page.dart';
 import 'package:babysitterapp/services/current_user_service.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
@@ -86,6 +88,14 @@ class _AccountPageState extends State<AccountPage> {
     });
   }
 
+  // divider
+  Padding get _buildDivider => const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        child: Divider(
+          color: secondaryColor,
+        ),
+      );
+
   // Input styling
   InputDecoration get _defaultInputDecoration => InputDecoration(
         labelStyle: const TextStyle(color: Colors.grey),
@@ -126,41 +136,7 @@ class _AccountPageState extends State<AccountPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: Colors.orange.shade100,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.warning_amber_rounded,
-                              color: Colors.black),
-                          const SizedBox(width: 10),
-                          const Expanded(
-                            child: Text(
-                              "You need to verify your account.",
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const Reqpage(),
-                                ),
-                              );
-                            },
-                            child: const Text(
-                              "Verify Now",
-                              style: TextStyle(color: primaryColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 20),
                     Stack(
                       children: [
                         CircleAvatar(
@@ -185,6 +161,54 @@ class _AccountPageState extends State<AccountPage> {
                       ],
                     ),
                     const SizedBox(height: 40),
+                    // role
+                    _buildProfileField(
+                      label: 'Role',
+                      initialValue: currentUser!.role,
+                      onSaved: (value) => currentUser!.role = value,
+                      validator: null,
+                      enabled: false,
+                    ),
+                    const SizedBox(height: 20),
+                    // add logic to differentiate current users
+                    currentUser != null &&
+                            currentUser?.role.toLowerCase() != 'babysitter'
+                        ?
+                        // if current user is a parent, they will get this form field
+                        _buildAgeInputField(
+                            label: "Child Age",
+                            initialValue: currentUser!.childAge,
+                            onSaved: (value) => currentUser!.childAge = value,
+                            validator: null,
+                          )
+                        :
+                        // if current user is a babysitter, they will get this form field
+
+                        _buildRateField(
+                            enabled: _isEditing,
+                            label: "Rate",
+                            initialValue: currentUser!.rate.toString(),
+                            onSaved: (value) {
+                              // Safely parse the value to double
+                              if (value != null && value.isNotEmpty) {
+                                currentUser!.rate = double.tryParse(value);
+                              }
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please set your rate';
+                              }
+                              final rate = double.tryParse(value);
+                              if (rate == null) {
+                                return 'Please enter a valid number';
+                              }
+                              return null;
+                            },
+                          ),
+
+                    // divider
+                    _buildDivider,
+
                     _buildProfileField(
                       label: 'Full Name',
                       initialValue: currentUser!.name,
@@ -198,15 +222,6 @@ class _AccountPageState extends State<AccountPage> {
                       label: 'Email',
                       initialValue: currentUser!.email,
                       onSaved: (value) => currentUser!.email = value,
-                      validator: null,
-                      enabled: false,
-                    ),
-                    const SizedBox(height: 20),
-                    // role
-                    _buildProfileField(
-                      label: 'Role',
-                      initialValue: currentUser!.role,
-                      onSaved: (value) => currentUser!.role = value,
                       validator: null,
                       enabled: false,
                     ),
@@ -257,23 +272,7 @@ class _AccountPageState extends State<AccountPage> {
                       enabled: _isEditing,
                       maxLines: 3,
                     ),
-                    const SizedBox(height: 20),
-
-                    // add logic to differentiate current users
-                    currentUser != null &&
-                            currentUser?.role.toLowerCase() != 'babysitter'
-                        ?
-                        // if current user is a parent, they will get this form field
-                        _buildAgeInputField(
-                            label: "Child Age",
-                            initialValue: currentUser!.childAge,
-                            onSaved: (value) => currentUser!.childAge = value,
-                            validator:
-                                null, // Add validation logic here if needed
-                          )
-                        :
-                        // if current user is a babysitter, they will get this form field
-                        Container(),
+                    const SizedBox(height: 10),
 
                     const SizedBox(height: 30),
                   ],
@@ -284,6 +283,41 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   //* Widgets used for building
+
+  Widget _buildVerifyAccount() {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.orange.shade100,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.warning_amber_rounded, color: Colors.black),
+          const SizedBox(width: 10),
+          const Expanded(
+            child: Text(
+              "You need to verify your account.",
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const Reqpage(),
+                ),
+              );
+            },
+            child: const Text(
+              "Verify Now",
+              style: TextStyle(color: primaryColor),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildProfileField({
     required String label,
@@ -479,6 +513,41 @@ class _AccountPageState extends State<AccountPage> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildRateField({
+    required String label,
+    required String initialValue,
+    required Function(String?) onSaved,
+    required String? Function(String?) validator,
+    bool enabled = false,
+  }) {
+    return TextFormField(
+      enabled: enabled,
+      initialValue: initialValue,
+      onSaved: onSaved,
+      validator: validator,
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly, // Allow only digits
+      ],
+      decoration: _defaultInputDecoration.copyWith(
+        labelText: label,
+        prefixIcon: const Padding(
+          padding: EdgeInsets.only(left: 15, right: 10, top: 12),
+          child: Text(
+            'PHP',
+            style: TextStyle(
+                color: secondaryColor,
+                fontSize: 16,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+        suffixText: '/hr',
+        suffixStyle: const TextStyle(color: Colors.grey),
+      ),
+      style: const TextStyle(textBaseline: TextBaseline.alphabetic),
     );
   }
 }
