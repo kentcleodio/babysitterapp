@@ -348,13 +348,6 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
             Navigator.pushReplacementNamed(context, '/welcome');
           },
         ),
-        const SizedBox(width: _spacing),
-        _buildSocialButton(
-          'https://upload.wikimedia.org/wikipedia/commons/c/cd/Facebook_logo_%28square%29.png',
-          () {
-            // Facebook login logic
-          },
-        ),
       ],
     );
   }

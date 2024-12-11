@@ -158,7 +158,8 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
           // Forgot password logic
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+            MaterialPageRoute(
+                builder: (context) => const ForgotPasswordScreen()),
           );
         },
         child: const Text(
@@ -214,13 +215,6 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
             await googleSignIn.signInWithGoogle();
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const CheckAuthPage()));
-          },
-        ),
-        const SizedBox(width: _spacing),
-        _buildSocialLoginButton(
-          'https://upload.wikimedia.org/wikipedia/commons/c/cd/Facebook_logo_%28square%29.png',
-          () {
-            // Facebook login logic
           },
         ),
       ],
