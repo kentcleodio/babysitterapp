@@ -1,3 +1,4 @@
+import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -56,9 +57,8 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
       appBar: AppBar(
         title: const Text(
           'Set Availability',
-          style: TextStyle(fontFamily: 'Poppins'),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: primaryColor,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -69,21 +69,20 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
               'Add New Schedule',
               style: TextStyle(
                 fontSize: 22,
-                fontFamily: 'Poppins',
-                color: Colors.deepPurple,
+                color: primaryColor,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 15),
             ElevatedButton.icon(
               onPressed: _pickDateTime,
-              icon: const Icon(Icons.add, color: Colors.white),
+              icon: const Icon(Icons.add, color: backgroundColor),
               label: const Text(
                 'Pick a Schedule',
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 16),
+                style: TextStyle(fontSize: 16),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: primaryColor,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -98,8 +97,7 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
               'Your Availability',
               style: TextStyle(
                 fontSize: 22,
-                fontFamily: 'Poppins',
-                color: Colors.deepPurple,
+                color: primaryColor,
               ),
               textAlign: TextAlign.center,
             ),
@@ -121,7 +119,7 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
                           });
                         },
                         child: Card(
-                          color: Colors.deepPurple[50],
+                          color: tertiaryColor,
                           elevation: 4,
                           margin: const EdgeInsets.symmetric(vertical: 8),
                           shape: RoundedRectangleBorder(
@@ -135,22 +133,20 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
                             title: Text(
                               _availability[index]['date']!,
                               style: const TextStyle(
-                                fontFamily: 'Poppins',
                                 fontSize: 18,
-                                color: Colors.deepPurple,
+                                color: primaryColor,
                               ),
                             ),
                             subtitle: Text(
                               _availability[index]['time']!,
                               style: const TextStyle(
-                                fontFamily: 'Poppins',
                                 fontSize: 16,
                                 color: Colors.grey,
                               ),
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete_outline,
-                                  color: Colors.deepPurple),
+                                  color: primaryColor),
                               onPressed: () {
                                 setState(() {
                                   _availability.removeAt(index);
@@ -168,7 +164,6 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
                       child: Text(
                         'No availability set yet!',
                         style: TextStyle(
-                          fontFamily: 'Poppins',
                           fontSize: 16,
                           color: Colors.grey,
                         ),
