@@ -146,7 +146,8 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
                 child: Row(
                   children: [
                     CircleAvatar(
-                      backgroundImage:
+                      backgroundImage: const AssetImage(defaultImage),
+                      foregroundImage:
                           AssetImage(recipient!.img ?? defaultImage),
                     ),
                     const SizedBox(width: 10),
@@ -183,52 +184,6 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              IconButton(
-                                onPressed: () {
-                                  //send offer function
-                                  showModalBottomSheet(
-                                    context: context,
-                                    builder: (context) {
-                                      return StatefulBuilder(
-                                        builder: (context, setState) {
-                                          return OfferModal(
-                                            iconOnPressed: () {
-                                              setState(() {
-                                                selectedOffer =
-                                                    userData.offerList.first;
-                                              });
-                                              Navigator.pop(context);
-                                            },
-                                            children:
-                                                userData.offerList.map((offer) {
-                                              return RadioListTile<String>(
-                                                title: Text('PHP $offer/hr'),
-                                                value: offer,
-                                                groupValue: selectedOffer,
-                                                onChanged: (String? value) {
-                                                  setState(() {
-                                                    selectedOffer = value!;
-                                                  });
-                                                },
-                                              );
-                                            }).toList(),
-                                            buttonOnPressed: () {
-                                              addMessage(
-                                                  'Offer: PHP $selectedOffer/hr');
-                                              setState(() {
-                                                selectedOffer =
-                                                    userData.offerList.first;
-                                              });
-                                              Navigator.pop(context);
-                                            },
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: const Icon(Icons.local_offer),
-                              ),
                               IconButton(
                                 onPressed: () {
                                   //add message function

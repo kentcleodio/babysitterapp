@@ -24,6 +24,19 @@ class ChatService {
     return chatListID;
   }
 
+  Future<void> deleteChat(String currentUserID, String chatDocID) async {
+    try {
+      await users
+          .doc(currentUserID)
+          .collection('messages')
+          .doc(chatDocID)
+          .delete(); // Delete the specific document
+      print("Chat document $chatDocID deleted successfully.");
+    } catch (e) {
+      print("Error deleting chat document: $e");
+    }
+  }
+
   //fetch messages of the selected chat
   Future<List<Messages>> getMessages(
       String currentUserID, String recipientID) async {
