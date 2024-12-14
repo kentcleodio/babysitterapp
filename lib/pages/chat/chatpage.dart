@@ -1,8 +1,9 @@
-import 'package:babysitterapp/services/firestore.dart';
+import 'package:babysitterapp/models/user_model.dart';
+import 'package:babysitterapp/services/chat_service.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../controller/user.dart';
+import '../../services/babysitter_service.dart';
 import '/controller/userdata.dart';
 import 'chatboxpage.dart';
 
@@ -15,9 +16,10 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  FirestoreService firestoreService = FirestoreService();
+  final ChatService chatService = ChatService();
+  final BabysitterService babysitterService = BabysitterService();
   late List? chatList;
-  UserData userData = UserData();
+  final UserData userData = UserData();
   late bool isLongPressed;
   List<String> selectedBabysitterId = [];
 
@@ -31,47 +33,34 @@ class _ChatPageState extends State<ChatPage> {
 
   //fetch chat list of the current user
   Future<void> fetchChatList() async {
-    chatList = await firestoreService.getChatListID(widget.currentUserID);
+    chatList = await chatService.getChatListID(widget.currentUserID);
+
     setState(() {});
-  }
-
-  // Helper function to fetch each recipient’s data
-  Future<List<Widget>> _fetchRecipients() async {
-    List<Widget> recipientWidgets = [];
-
-    for (String recipientID in chatList!) {
-      // Fetch recipient data
-      var recipient = await FirestoreService().getUserData(recipientID);
-
-      // Add a widget to the list for each recipient
-      if (recipient != null) recipientWidgets.add(babysitterList(recipient));
-    }
-
-    return recipientWidgets;
   }
 
   @override
   void dispose() {
     super.dispose();
+    chatList!.clear();
   }
 
   //list item of chat of the current user
-  Widget babysitterList(User recipient) => InkWell(
+  Widget babysitterList(UserModel recipient) => InkWell(
         onTap: () {
           if (isLongPressed) {
             setState(() {
               //Add or remove babysitter id to the selected list
-              if (selectedBabysitterId.contains(recipient.id)) {
-                selectedBabysitterId.remove(recipient.id);
+              if (selectedBabysitterId.contains(recipient.email)) {
+                selectedBabysitterId.remove(recipient.email);
               } else {
-                selectedBabysitterId.add(recipient.id);
+                selectedBabysitterId.add(recipient.email);
               }
             });
           } else {
             // Navigate to the chat box of the clicked babysitter
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => ChatBoxPage(
-                recipientID: recipient.id,
+                recipientID: recipient.email,
                 currentUserID: widget.currentUserID,
               ),
             ));
@@ -80,7 +69,7 @@ class _ChatPageState extends State<ChatPage> {
         onLongPress: () {
           setState(() {
             //Add babysitter id to the selected list
-            selectedBabysitterId.add(recipient.id);
+            selectedBabysitterId.add(recipient.email);
             isLongPressed = true;
           });
         },
@@ -92,23 +81,23 @@ class _ChatPageState extends State<ChatPage> {
               //if longpressed is true diplay the checkbox
               if (isLongPressed)
                 Checkbox(
-                  value: selectedBabysitterId.contains(recipient.id),
+                  value: selectedBabysitterId.contains(recipient.email),
                   onChanged: (bool? value) {
                     setState(() {
                       if (value == true) {
                         //Add babysitter id to the selected list
-                        selectedBabysitterId.add(recipient.id);
+                        selectedBabysitterId.add(recipient.email);
                       } else {
                         //Remove babysitter id to the selected list
-                        selectedBabysitterId.remove(recipient.id);
+                        selectedBabysitterId.remove(recipient.email);
                       }
                     });
                   },
                 ),
               CircleAvatar(
                 radius: 30,
-                backgroundImage: recipient.img != ""
-                    ? AssetImage(recipient.img)
+                backgroundImage: (recipient.img != null)
+                    ? AssetImage(recipient.img ?? defaultImage)
                     : const AssetImage('assets/images/default_user.png'),
               ),
               const SizedBox(width: 15),
@@ -181,21 +170,58 @@ class _ChatPageState extends State<ChatPage> {
               ],
             ),
       body: (chatList != null)
-          ? FutureBuilder<List<Widget>>(
-              future: _fetchRecipients(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('No recipients found.'));
-                }
-
-                // Display the list of recipients as widgets
-                return ListView(
-                  children: snapshot.data!,
+          ? ListView(
+              children: chatList!.map((l) {
+                return FutureBuilder(
+                  future: babysitterService.getBabysitterByEmail(l),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return const Center(
+                        child: Text('Error loading data.'),
+                      );
+                    } else if (snapshot.hasData) {
+                      UserModel recipientData = snapshot.data!;
+                      return Card(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: const AssetImage(defaultImage),
+                            foregroundImage:
+                                AssetImage(recipientData.img ?? defaultImage),
+                            radius: 30,
+                          ),
+                          title: Text(
+                            recipientData.name,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                          subtitle: Text(
+                            recipientData.email,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                          trailing: const Icon(CupertinoIcons.chevron_right),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatBoxPage(
+                                        recipientID: recipientData.email,
+                                        currentUserID: widget.currentUserID)));
+                          },
+                        ),
+                      );
+                    } else {
+                      return const Center(
+                        child: Text('No messages yet'),
+                      );
+                    }
+                  },
                 );
-              },
+              }).toList(),
             )
           : const Center(
               child: CircularProgressIndicator(),

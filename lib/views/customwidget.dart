@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:babysitterapp/components/button.dart';
 import 'package:babysitterapp/controller/feedback.dart';
 import 'package:babysitterapp/controller/user.dart';
+import 'package:babysitterapp/services/chat_service.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../controller/messages.dart';
+import '../models/user_model.dart';
 import '../services/firestore.dart';
 import '../styles/colors.dart';
 
@@ -553,8 +555,8 @@ class CustomWidget {
       );
 
   //Line of each message
-  Widget messageLine(bool isUser, Messages messages, User? currentUser,
-      User? recipient, Function() onTap) {
+  Widget messageLine(bool isUser, Messages messages, UserModel? currentUser,
+      UserModel? recipient, Function() onTap) {
     final DateTime currentDate = DateTime.now();
     final bool isYesterday = messages.timestamp.year < currentDate.year ||
         messages.timestamp.month < currentDate.month ||
@@ -591,13 +593,17 @@ class CustomWidget {
                     ),
                     const SizedBox(width: 5),
                     CircleAvatar(
-                      backgroundImage: AssetImage(currentUser!.img),
+                      backgroundImage: const AssetImage(defaultImage),
+                      foregroundImage:
+                          AssetImage(currentUser!.img ?? defaultImage),
                       radius: 20,
                     ),
                   ]
                 : [
                     CircleAvatar(
-                      backgroundImage: AssetImage(recipient!.img),
+                      backgroundImage: const AssetImage(defaultImage),
+                      foregroundImage:
+                          AssetImage(recipient!.img ?? defaultImage),
                       radius: 20,
                     ),
                     const SizedBox(width: 5),
