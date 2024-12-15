@@ -366,6 +366,7 @@ class _RateAndReviewPageState extends State<RateAndReviewPage> {
                                                       builder: (context) =>
                                                           const HomePage(),
                                                     ));
+
                                               },
                                             ),
                                           );

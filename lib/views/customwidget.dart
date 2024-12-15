@@ -345,6 +345,7 @@ class CustomWidget {
         ),
       );
 
+
   //rating star icon
   Widget ratingStar(i, double size_, Color starColor) => Row(
         mainAxisSize: MainAxisSize.min,
@@ -498,6 +499,7 @@ class CustomWidget {
   //Line of each message
   Widget messageLine(bool isUser, Messages messages, UserModel? currentUser,
       UserModel? recipient, Function() onTap) {
+
     final DateTime currentDate = DateTime.now();
     final bool isYesterday = messages.timestamp.year < currentDate.year ||
         messages.timestamp.month < currentDate.month ||
@@ -537,6 +539,7 @@ class CustomWidget {
                       backgroundImage: const AssetImage(defaultImage),
                       foregroundImage:
                           AssetImage(currentUser!.img ?? defaultImage),
+
                       radius: 20,
                     ),
                   ]

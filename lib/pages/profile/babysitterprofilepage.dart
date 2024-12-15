@@ -93,7 +93,6 @@ class _BabysitterProfilePageState extends State<BabysitterProfilePage> {
     double average = totalRating / feedbackList.length;
     return double.parse(average.toStringAsFixed(1));
   }
-
   // Initiate loading in initState
   @override
   void initState() {
