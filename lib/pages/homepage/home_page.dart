@@ -119,23 +119,24 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   final babysitter = babysitters[index];
                   return InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => BabysitterProfilePage(
-                            babysitterID: babysitter.email,
-                            currentUserID: currentUser!.email,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => BabysitterProfilePage(
+                              babysitterID: babysitter.email,
+                              currentUserID: currentUser!.email,
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    child: BabysitterCard(
-                      name: babysitter.name,
-                      rate: babysitter.rate!,
-                      rating: babysitter.rating!,
-                      gender: babysitter.gender!,
-                      birthdate: babysitter.age!,
-                      profileImage: babysitter.img ?? 'default_image_url',
+                        );
+                      },
+                      child: BabysitterCard(
+                        name: babysitter.name,
+                        rate: babysitter.rate ?? 0.0,
+                        rating: babysitter.rating ?? 0.0,
+                        gender: babysitter.gender ?? 'Unknown',
+                        birthdate: babysitter.age ?? DateTime(2000, 1, 1),
+                        profileImage: babysitter.img ?? 'default_image_url',
+                      )
 
                       // TODO: implementation of favorite babysitter
                       // heartIcon: IconButton(
@@ -147,8 +148,7 @@ class _HomePageState extends State<HomePage> {
                       //   ),
                       //   onPressed: () => _toggleLike(index),
                       // ),
-                    ),
-                  );
+                      );
                 },
               ),
             ],
